@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   HW_HardDisk.h
  * Author: cancian
  *
@@ -52,7 +52,7 @@ public:
     void setDataRegister(unsigned int _dataRegister);
     unsigned int getDataRegister() const;
     void setStreamRegister(DiskSectorData _streamRegister);
-    DiskSectorData* getStreamRegister() const;
+    DiskSectorData* getStreamRegister();
 private:
     DiskSectorData _streamRegister;
     unsigned int _dataRegister;

@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   HW_HardDisk.cpp
  * Author: cancian
- * 
+ *
  * Created on 29 de Agosto de 2016, 11:55
  */
 
@@ -134,7 +134,7 @@ void HW_HardDisk::setStreamRegister(DiskSectorData _streamRegister) {
     }
 }
 
-HW_HardDisk::DiskSectorData* HW_HardDisk::getStreamRegister() const {
+HW_HardDisk::DiskSectorData* HW_HardDisk::getStreamRegister() {
     return &_streamRegister;
 
 }
