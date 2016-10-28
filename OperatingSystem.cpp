@@ -21,7 +21,7 @@ void OperatingSystem::LoadApplication(Application* app, MMU::PhysicalAddress add
         info = (*it);
         HW_Machine::RAM()->write(address, info);
         address++;
-    }    
+    }
 }
 
 void OperatingSystem::SetBootApplication(Application* app) {
@@ -34,18 +34,18 @@ void OperatingSystem::SetBootApplication(Application* app) {
 void OperatingSystem::Init() {
     Debug::cout(Debug::Level::trace, "OperatingSystem::init()");
     HW_Machine::Init();
-    
+
     OperatingSystem::CPU_Mediator();
     OperatingSystem::DMA_Mediator();
     OperatingSystem::HardDisk_Mediator();
     OperatingSystem::MMU_Mediator();
     OperatingSystem::Timer_Mediator();
-    
+
     SetBootApplication(Application::DefaultBootApplication());  // load boot application into RAMs
 }
 
 
-void OperatingSystem::ExecuteTestCode() { 
+void OperatingSystem::ExecuteTestCode() {
     Debug::cout(Debug::Level::trace, "OperatingSystem::EXecuteTestCode()");
     Simulator* simulator = Simulator::getInstance();
     Entity* entity = simulator->getEntity();
@@ -57,11 +57,11 @@ void OperatingSystem::ExecuteTestCode() {
     // You can write a test code that will be executed and will invoke system calls or whenever you want
     // Follow the examples...
     // ...
-    
+
     switch (executionStep) {
         case 0:  // ExecutionStep is initialized with 0
             entity->getAttribute("ExecutionStep")->setValue(std::to_string(executionStep++)); // advance execution step
-            simulator->insertEvent(timeNow + 10.0, module, entity); // future event when execution will advance 
+            simulator->insertEvent(timeNow + 10.0, module, entity); // future event when execution will advance
             break;
         case 1:
             entity->getAttribute("ExecutionStep")->setValue(std::to_string(executionStep++)); // advance execution step
@@ -76,7 +76,7 @@ void OperatingSystem::ExecuteTestCode() {
             //entity->getAttribute("ExecutionStep")->setValue(std::to_string(executionStep++)); // advance execution step
             break;
     }
-    
+
 }
 
  /*
@@ -84,10 +84,10 @@ void OperatingSystem::ExecuteTestCode() {
   */
  HW_MMU::Information OperatingSystem::asmm(std::string mnemonic) {
      HW_MMU::Information bincode;
-     /* @TODO 
+     /* @TODO
       */
      if (mnemonic == "Process:exec()") {
-         bincode = 0xFFFFFFFF; // - (HW_CPU::addi<<24) + 
+         bincode = 0xFFFFFFFF; // - (HW_CPU::addi<<24) +
      }
      //@TODO
      bincode = (HW_CPU::addi<<26) + (HW_CPU::s0<<21) + (HW_CPU::s1<<16) + 1; // for tests purpose only

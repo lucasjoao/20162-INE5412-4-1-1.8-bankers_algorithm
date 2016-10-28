@@ -42,9 +42,9 @@ struct Traits {
 
 template<> struct Traits<Model> {
     enum ProblemType { MemoryManagement, ProcessScheduling, ProcessManagement, Deadlock, DiskScheduling, FileSystem, DevicesAndTime };
-    enum ProblemSolving{   
+    enum ProblemSolving{
         // MemoryMAnagement
-        BestFit111, WorstFit112, LRU121, LFU122, NRU123, Segment13, 
+        BestFit111, WorstFit112, LRU121, LFU122, NRU123, Segment13,
         // Process Scheduling
         Priority141, Fair142, SRTF143, Multiple144, Linux145, EDF151, RM152, Sporadic153,
         // process management
@@ -57,8 +57,8 @@ template<> struct Traits<Model> {
         Linked101, Indexed1102, Multilevel1103, Bitmap1111, Grouping1112,
         // DevicesAnsTime
         Alarm12, I2C1141, SPI1142 };
-    static const ProblemType   problemType = MemoryManagement; // SET HERE THE COMPUTACIONAL TYPE YOU ARE SOLVING (THE ONE YOU HAVE CHOOSEN AS TOUR "SC")
-    static const ProblemSolving problemChoosen = Segment13; // SET HERE THE COMPUTACIONAL SYSTEM YOU ARE SOLVING (THE ONE YOU HAVE CHOOSEN AS TOUR "SC")
+    static const ProblemType   problemType = Deadlock;
+    static const ProblemSolving problemChoosen = Banker18;
     static constexpr double simulationLength = 500.0; // time units
     static constexpr double firstCreation = 0.0;       // time units
 };
@@ -82,7 +82,7 @@ template<> struct Traits<Debug> { // CHANGE THE DEBUG LEVEL HERE SETTING THE LEV
 
 
 /*
- *  ABSTRACTIONS 
+ *  ABSTRACTIONS
  */
 
 
@@ -123,7 +123,7 @@ template<> struct Traits<CPU> {
 };
 
 /*
- *  HARDWARE 
+ *  HARDWARE
  */
 
 
@@ -137,7 +137,7 @@ template<> struct Traits<HW_MMU> {
 };
 
 template<> struct Traits<HW_HardDisk> {
-    static constexpr unsigned int diskSectorSize = 64; 
+    static constexpr unsigned int diskSectorSize = 64;
     static constexpr unsigned int numSurfaces = 1;
     static constexpr unsigned int numTracksPerSurface = 1000;
     static constexpr unsigned int numSectorsPerTrack = 2;
