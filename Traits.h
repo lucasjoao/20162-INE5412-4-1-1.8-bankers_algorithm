@@ -104,7 +104,7 @@ template<> struct Traits<Thread> {
 template<> struct Traits<MemoryManager> {
     enum AllocationAlgorithm {FirstFit, NextFit, BestFit, WorstFit};
     enum ReplacementAlgorithm {FIFO, LRU, LFU, NFU, SecondChance};
-    static constexpr unsigned int physicalMemorySize = 1e6; // bytes
+    static constexpr unsigned int physicalMemorySize = 100; // bytes
     static constexpr AllocationAlgorithm allocationAlgorithm = AllocationAlgorithm::BestFit;
     static constexpr ReplacementAlgorithm replacementAlgorithm = ReplacementAlgorithm::FIFO;
 };

@@ -11,6 +11,7 @@
 #include "OperatingSystem.h"
 #include "Simulator.h"
 #include "Simul_Debug.h"
+#include "Traits.h"
 
 Process::Process(unsigned int parentId) {
     this->_entity = Simulator::getInstance()->getEntity(); // simulation purposes only
@@ -56,22 +57,24 @@ unsigned int Process::getId() const {
  * static void Thread::thread_create(Process* parent). O metodo retorna o processo criado.
  **/
 Process* Process::exec() { /*static*/
-    Debug::cout(Debug::Level::trace, "Process::exec()");
-    // INSERT YOUR CODE HERE (just complete what is missing... easy this time...)
+  Debug::cout(Debug::Level::trace, "Process::exec()");
 
-    // criar um Process
-    Process* newProcess = new Process(0);
+  auto nro_process = 5;
+  auto memorySize = Traits<MemoryManager>::physicalMemorySize;
 
-    // alocar memória para ele
+  auto hasMem = rand() % int(memorySize/nro_process) + 1;
+  auto needMem = hasMem + (rand() % hasMem + 1);
 
-    // inicializar seus atributos
+  Process* newProcess = new Process(0);
+  newProcess->setNeedMem(needMem);
+  newProcess->setHasMem(hasMem);
 
-    // colocá-lo na lista de processos no sistema
+  Debug::cout(Debug::Level::info,
+    "Processo com ID " + std::to_string(newProcess->getId()) +
+    " tem " + std::to_string(newProcess->getHasMem()) + " e precisa de " +
+    std::to_string(newProcess->getNeedMem()) + " do recurso memória");
 
-    // criar uma thread (correspondente a "main") para esse processo
-
-    // retorna o processo criado
-    return newProcess;
+  return newProcess;
 }
 
 /**

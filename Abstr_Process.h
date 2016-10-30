@@ -20,7 +20,7 @@ class Process {
     friend class Thread;
     //friend class ModuleInvoke_ProcessExec; // for simulation purposes only
     friend class ProblemTester; // for simulation purposes only
-    
+
     // scructs for grouping process' attributes
 
     struct IdentificationInformation {
@@ -78,10 +78,25 @@ public: // For simulation use only. Do not change
 private: // for simulator use only. Do not change
     Entity* _entity; //used only by the simulator
 public: // USER DEFINED
-    // INSERT YOUR CODE HERE
+    void setHasMem(unsigned int hasMem) {
+      _hasMem = hasMem;
+    }
+
+    void setNeedMem(unsigned int needMem) {
+      _needMem = needMem;
+    }
+
+    unsigned int getHasMem() {
+      return _hasMem;
+    }
+
+    unsigned int getNeedMem() {
+      return _needMem;
+    }
 
 private: // USER DEFINED
-    // INSERT YOUR CODE HERE
+    unsigned int _hasMem;
+    unsigned int _needMem;
 };
 
 #endif	/* PROCESS_H */

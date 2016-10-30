@@ -16,8 +16,7 @@
 
 
 MemoryManager::MemoryManager() {
-    _chunks = new std::list<MemoryChunk*>();
-    // ...
+  _chunks = new std::list<MemoryChunk*>();
 }
 
 MemoryManager::MemoryManager(const MemoryManager& orig) {
@@ -30,7 +29,7 @@ MemoryChunk* MemoryManager::allocateMemory(unsigned int size) {
     Debug::cout(Debug::Level::trace, "MemoryManager::allocateMemory(" + std::to_string(size) + ")");
     // INSERT YOUR CODE TO ALLOCATE MEMORY (A CHUNK) FOR THE PROCESS
     // ...
-    
+
     return nullptr;
 }
 
@@ -38,8 +37,8 @@ void MemoryManager::deallocateMemory(MemoryChunk* chunk) {
     Debug::cout(Debug::Level::trace, "MemoryManager::deallocateMemory(" + std::to_string(reinterpret_cast<unsigned long> (chunk)) + ")");
     // INSERT YOUR CODE TO DEALLOCATE MEMORY (A CHUNK) OF THE PROCESS
     // ...
-    
-     
+
+
 }
 
 unsigned int MemoryManager::getNumMemoryChunks() {
@@ -58,19 +57,19 @@ MemoryChunk* MemoryManager::getMemoryChunk(unsigned int index) {
 void MemoryManager::showMemory() {
     // INSERT YOUR CODE TO SHOW THE MEMORY MAP, IN THE FOLLOWING FORMAT
     // <beginAddress>-<endAddress>: <FREE|ALLOCATED> <size> <process id>
-    
+
     // Exemplo:
     /*
       0-1499:FREE 1500 0
       1500-1999:ALLOCATED 500 2
       2000-2999:ALLOCATED 1000 3
-      3000-9999:FREE 7000 0 
+      3000-9999:FREE 7000 0
       10000-19999:ALLOCATED 10000 7
-      20000-1000000:FREE 800000 0 
+      20000-1000000:FREE 800000 0
     */
     //std::cout << "Memory Map:" << std::endl;
 
     // INSERT YOUR CODE TO SHOW THE MEMORY MAP
     // ...
-    
+
 }

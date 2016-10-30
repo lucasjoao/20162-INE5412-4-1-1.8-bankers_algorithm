@@ -46,37 +46,28 @@ void OperatingSystem::Init() {
 
 
 void OperatingSystem::ExecuteTestCode() {
-    Debug::cout(Debug::Level::trace, "OperatingSystem::EXecuteTestCode()");
-    Simulator* simulator = Simulator::getInstance();
-    Entity* entity = simulator->getEntity();
-    Module* module = simulator->getModule();
-    int executionStep = std::stoi(entity->getAttribute("ExecutionStep")->getValue());
-    double timeNow = simulator->getTnow();
+  Debug::cout(Debug::Level::trace, "OperatingSystem::ExecuteTestCode()");
+  Simulator* simulator = Simulator::getInstance();
 
-    // INSERT HERE YOUR CODE
-    // You can write a test code that will be executed and will invoke system calls or whenever you want
-    // Follow the examples...
-    // ...
+  // better use a number where memorySize % number = 0
+  // if change here, need update Process:exec
+  auto nro_process = 5;
+  Debug::cout(Debug::Level::info,
+    "Recurso utilizado na aplicação do algoritmo do banqueiro é a memória. " +
+    std::to_string(nro_process) + " processos na simulação.");
 
-    switch (executionStep) {
-        case 0:  // ExecutionStep is initialized with 0
-            entity->getAttribute("ExecutionStep")->setValue(std::to_string(executionStep++)); // advance execution step
-            simulator->insertEvent(timeNow + 10.0, module, entity); // future event when execution will advance
-            break;
-        case 1:
-            entity->getAttribute("ExecutionStep")->setValue(std::to_string(executionStep++)); // advance execution step
-            break;
-        case 2:
-            entity->getAttribute("ExecutionStep")->setValue(std::to_string(executionStep++)); // advance execution step
-            break;
-        case 3:
-            entity->getAttribute("ExecutionStep")->setValue(std::to_string(executionStep++)); // advance execution step
-            break;
-        default:
-            //entity->getAttribute("ExecutionStep")->setValue(std::to_string(executionStep++)); // advance execution step
-            break;
-    }
+  auto memorySize = Traits<MemoryManager>::physicalMemorySize;
+  Debug::cout(Debug::Level::info,
+    "Total de memória na simulação é " + std::to_string(memorySize));
 
+  std::list<Process*>* processList = new std::list<Process*>();
+  for(int i = 0; i < nro_process; i++) {
+    processList->push_front(Process::exec());
+  }
+
+  MemoryManager *memoryManager = OperatingSystem::Memory_Manager();
+
+  simulator->stop();
 }
 
  /*
