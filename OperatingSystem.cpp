@@ -66,7 +66,7 @@ void OperatingSystem::ExecuteTestCode() {
   std::vector<unsigned int>* ids = new std::vector<unsigned int>();
   std::vector<unsigned int>* hasMems = new std::vector<unsigned int>();
   std::vector<unsigned int>* needMems = new std::vector<unsigned int>();
-  for(int i = 0; i < nro_process; i++) {
+  for (int i = 0; i < nro_process; i++) {
     processes->push_back(Process::exec());
     // not good again
     ids->push_back(processes->at(i)->getId());
@@ -75,9 +75,48 @@ void OperatingSystem::ExecuteTestCode() {
   }
 
   MemoryManager *memoryManager = OperatingSystem::Memory_Manager();
-  // ideal way is pass processes, but i did this...
-  memoryManager->banker(ids, hasMems, needMems, 0, 1);
-  // colocar cout de pedidos ao jogar no for
+  auto ask = 0;
+  auto areSafe = 0;
+  bool safe;
+  clock_t start;
+  double time;
+  double allTime = 0;
+  for (int j = 0; j < nro_process; j++) {
+    ask = rand() % memorySize;
+
+    Debug::cout(Debug::Level::info, "Processo " + std::to_string(ids->at(j)) +
+      " solicita " + std::to_string(ask) + " de memória. Será que é possível "
+      + "fornecer e gerar um estado seguro?");
+
+    start = clock();
+
+    // ideal way is pass processes, but i did this...
+    safe = memoryManager->banker(ids, hasMems, needMems, j, ask);
+
+    time = double(clock() - start)/ CLOCKS_PER_SEC;
+
+    Debug::cout(Debug::Level::info,
+      "Foi gasto " + std::to_string(time) + " segundos no algoritmo.");
+    Debug::cout(Debug::Level::info, "---------------------------------------");
+
+    if (safe)
+      areSafe += 1;
+
+    allTime += time;
+  }
+
+  auto areSafePercent = (double(areSafe)/double(nro_process)) * 100;
+  auto notSafePercent = 100 - areSafePercent;
+  auto averageTime = allTime / nro_process;
+  Debug::cout(Debug::Level::info, "De todos os pedidos de alocação "
+    + std::to_string(areSafePercent) + "\045 serão aprovados e "
+    + std::to_string(notSafePercent) + "\045 serão reprovados.");
+  Debug::cout(Debug::Level::info, "De todas os pedidos de alocação "
+    + std::to_string(areSafePercent) + "\045 serão estados seguros e "
+    + std::to_string(notSafePercent) + "\045 serão estados inseguros.");
+  Debug::cout(Debug::Level::info,
+    "O tempo médio de execução do algoritmo foi de " +
+    std::to_string(averageTime) + " segundos.");
 
   simulator->stop();
 }

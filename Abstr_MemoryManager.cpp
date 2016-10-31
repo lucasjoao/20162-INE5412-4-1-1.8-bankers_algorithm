@@ -40,12 +40,14 @@ bool MemoryManager::banker(std::vector<unsigned int> *ids,
 
   auto memorySize = Traits<MemoryManager>::physicalMemorySize;
   auto available = memorySize - used;
+  auto availableFixBug = available;
+  auto hasMemsFixBug = hasMems->at(i);
 
   bool safe = false;
   if (request > available) {
     Debug::cout(Debug::Level::info,
       "Estado inseguro, porque foi solicitado pelo processo " +
-      std::to_string(ids->at(i)) + " " + std::to_string(request) + " de" +
+      std::to_string(ids->at(i)) + " " + std::to_string(request) + " de " +
       "recurso, sendo que há " + std::to_string(available) + " disponível.");
     return safe;
   }
@@ -90,6 +92,7 @@ bool MemoryManager::banker(std::vector<unsigned int> *ids,
         infiniteLoop = false;
         finishedJob->at(k) = true;
         available += hasMems->at(k);
+
         Debug::cout(Debug::Level::info,
           "Processo " + std::to_string(ids->at(k)) +
           + " com " + std::to_string(hasMems->at(k)) + " que precisa de "
@@ -99,7 +102,7 @@ bool MemoryManager::banker(std::vector<unsigned int> *ids,
       }
     }
 
-    if (infiniteLoop == true) break;
+    if (infiniteLoop) break;
   }
 
   if (available == memorySize) {
@@ -111,6 +114,8 @@ bool MemoryManager::banker(std::vector<unsigned int> *ids,
       "A requisição gera um estado inseguro, logo não pode ser atendida.");
   }
 
+  available = availableFixBug;
+  hasMems->at(i) = hasMemsFixBug;
   return safe;
 }
 
