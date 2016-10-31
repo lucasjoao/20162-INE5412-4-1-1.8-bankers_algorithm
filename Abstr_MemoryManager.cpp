@@ -32,38 +32,63 @@ bool MemoryManager::banker(std::vector<unsigned int> *ids,
   Debug::cout(Debug::Level::trace, "MemoryManager::banker");
 
   auto used = 0;
-  std::vector<bool>* finishedJob;
+  std::vector<bool>* finishedJob = new std::vector<bool>();
   for (int j = 0; j < ids->size(); j++) {
     used += hasMems->at(j);
     finishedJob->push_back(false);
   }
+
   auto memorySize = Traits<MemoryManager>::physicalMemorySize;
   auto available = memorySize - used;
 
   bool safe = false;
   if (request > available) {
+    Debug::cout(Debug::Level::info, "Estado inseguro, porque foi solicitado " +
+      "pelo processo " + std::to_string(ids->at(i)) + " " +
+      std::to_string(request) + " de recurso, sendo que só há " +
+      std::to_string(available) + " disponível.");
     return safe;
-  } else {
-    // available -= request;
-    // preciso atualizar quanto ele tem de memória aqui
-    bool dontNeedMore = request + hasMems->at(i) >= needMems->at(i);
-    if (dontNeedMore) {
-      available += hasMems->at(i);
-      finishedJob->at(i) = true;
-    } else {
-      bool iterateAgain = true;
-      while (iterateAgain) {
-        // aplicar lógica do iterateAgain no começo e se muda
-        for (int k = 0; k < ids->size(); k++) {
-          if (k == i && finishedJob->at(i)) continue;
-          auto askMem = needMems->at(i) - hasMems->at(i);
-          // se available >= askMem, então ele executa e atualiza tudo
-
-        }
-      }
-    }
   }
 
+  // cout aqui para quantidade de mem total
+
+  bool dontNeedMore = request + hasMems->at(i) >= needMems->at(i);
+  if (dontNeedMore) {
+    available += hasMems->at(i);
+    finishedJob->at(i) = true;
+    // cout aqui
+  } else {
+    available -= request;
+    hasMems->at(i) += request;
+    // cout aqui
+  }
+
+  bool infiniteLoop;
+  while (available != memorySize) {
+    infiniteLoop = true;
+    for (int k = 0; k < ids->size(); k++) {
+      if (k == i && finishedJob->at(i)) continue;
+      // cout aqui da tentativa
+      auto askMem = needMems->at(k) - hasMems->at(k);
+      if (available >= askMem && !finishedJob->at(k)) {
+        infiniteLoop = false;
+        finishedJob->at(k) = true;
+        available += hasMems->at(k);
+        // cout aqui
+      }
+    }
+
+    if (infiniteLoop == true) break;
+  }
+
+  if (available == memorySize) {
+    safe = true;
+    // cout aqui de seguro
+  } else {
+    // cout aqui de estado inseguro
+  }
+
+  return safe;
 }
 
 MemoryChunk* MemoryManager::allocateMemory(unsigned int size) {

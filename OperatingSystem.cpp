@@ -60,11 +60,11 @@ void OperatingSystem::ExecuteTestCode() {
   Debug::cout(Debug::Level::info,
     "Total de memória na simulação é " + std::to_string(memorySize));
 
-  std::vector<Process*>* processes;
+  std::vector<Process*>* processes = new std::vector<Process*>();
   // this solution is not good, but i took a error if diff...
-  std::vector<unsigned int>* ids;
-  std::vector<unsigned int>* hasMems;
-  std::vector<unsigned int>* needMems;
+  std::vector<unsigned int>* ids = new std::vector<unsigned int>();
+  std::vector<unsigned int>* hasMems = new std::vector<unsigned int>();
+  std::vector<unsigned int>* needMems = new std::vector<unsigned int>();
   for(int i = 0; i < nro_process; i++) {
     processes->push_back(Process::exec());
     // not good again
@@ -75,7 +75,8 @@ void OperatingSystem::ExecuteTestCode() {
 
   MemoryManager *memoryManager = OperatingSystem::Memory_Manager();
   // ideal way is pass processes, but i did this...
-  memoryManager->banker(ids, hasMems, needMems, 0, 0);
+  memoryManager->banker(ids, hasMems, needMems, 0, 1);
+  // colocar cout de pedidos ao jogar no for
 
   simulator->stop();
 }
