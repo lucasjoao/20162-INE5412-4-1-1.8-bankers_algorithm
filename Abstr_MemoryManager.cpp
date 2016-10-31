@@ -25,6 +25,13 @@ MemoryManager::MemoryManager(const MemoryManager& orig) {
 MemoryManager::~MemoryManager() {
 }
 
+bool MemoryManager::banker(std::vector<unsigned int> *ids,
+    std::vector<unsigned int> *hasMems, std::vector<unsigned int> *needMems,
+    int i, unsigned int request) {
+  Debug::cout(Debug::Level::trace, "MemoryManager::banker");
+
+}
+
 MemoryChunk* MemoryManager::allocateMemory(unsigned int size) {
     Debug::cout(Debug::Level::trace, "MemoryManager::allocateMemory(" + std::to_string(size) + ")");
     // INSERT YOUR CODE TO ALLOCATE MEMORY (A CHUNK) FOR THE PROCESS

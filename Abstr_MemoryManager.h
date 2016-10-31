@@ -9,6 +9,7 @@
 #ifndef MEMORYMANAGER_H
 #define	MEMORYMANAGER_H
 
+#include <vector>
 #include "Abstr_MemoryChunk.h"
 
 //enum MemoryAllocationAlgorithm {FirstFit, NextFit, BestFit, WorstFit};
@@ -25,9 +26,13 @@ public: // do not change
     void showMemory();
     unsigned int getNumMemoryChunks();
     MemoryChunk* getMemoryChunk(unsigned int index);
+
+    bool banker(std::vector<unsigned int> *ids,
+      std::vector<unsigned int> *hasMems, std::vector<unsigned int> *needMems,
+      int i, unsigned int request);
 private: // do not change
     std::list<MemoryChunk*>* _chunks;
-    
+
 private: // private attributes and methods
     // INSERT YOUR CODE HERE
     // ...

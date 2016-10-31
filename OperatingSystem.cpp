@@ -60,12 +60,22 @@ void OperatingSystem::ExecuteTestCode() {
   Debug::cout(Debug::Level::info,
     "Total de memória na simulação é " + std::to_string(memorySize));
 
-  std::list<Process*>* processList = new std::list<Process*>();
+  std::vector<Process*>* processes;
+  // this solution is not good, but i took a error if diff...
+  std::vector<unsigned int>* ids;
+  std::vector<unsigned int>* hasMems;
+  std::vector<unsigned int>* needMems;
   for(int i = 0; i < nro_process; i++) {
-    processList->push_front(Process::exec());
+    processes->push_back(Process::exec());
+    // not good again
+    ids->push_back(processes->at(i)->getId());
+    hasMems->push_back(processes->at(i)->getHasMem());
+    needMems->push_back(processes->at(i)->getNeedMem());
   }
 
   MemoryManager *memoryManager = OperatingSystem::Memory_Manager();
+  // ideal way is pass processes
+  memoryManager->banker(ids, hasMems, needMems, 0, 0);
 
   simulator->stop();
 }
