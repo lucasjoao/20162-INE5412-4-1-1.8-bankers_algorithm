@@ -43,38 +43,59 @@ bool MemoryManager::banker(std::vector<unsigned int> *ids,
 
   bool safe = false;
   if (request > available) {
-    Debug::cout(Debug::Level::info, "Estado inseguro, porque foi solicitado " +
-      "pelo processo " + std::to_string(ids->at(i)) + " " +
-      std::to_string(request) + " de recurso, sendo que só há " +
-      std::to_string(available) + " disponível.");
+    Debug::cout(Debug::Level::info,
+      "Estado inseguro, porque foi solicitado pelo processo " +
+      std::to_string(ids->at(i)) + " " + std::to_string(request) + " de" +
+      "recurso, sendo que há " + std::to_string(available) + " disponível.");
     return safe;
   }
 
-  // cout aqui para quantidade de mem total
+  Debug::cout(Debug::Level::info, "Há " + std::to_string(available) + " de"
+    + " memória disponível.");
 
   bool dontNeedMore = request + hasMems->at(i) >= needMems->at(i);
   if (dontNeedMore) {
     available += hasMems->at(i);
     finishedJob->at(i) = true;
-    // cout aqui
+    Debug::cout(Debug::Level::info, "Após solicitar " + std::to_string(request)
+      + " de memória, o processo " + std::to_string(ids->at(i)) + " terminará"
+      + " o seu trabalho.");
   } else {
     available -= request;
     hasMems->at(i) += request;
-    // cout aqui
+    Debug::cout(Debug::Level::info, "Solicitar " + std::to_string(request)
+      + " de memória não será suficiente para o processo " +
+      std::to_string(ids->at(i)) + " terminar o seu trabalho. Ele ainda " +
+      "precisa de " + std::to_string(needMems->at(i) - hasMems->at(i)) + ".");
   }
 
   bool infiniteLoop;
   while (available != memorySize) {
     infiniteLoop = true;
     for (int k = 0; k < ids->size(); k++) {
-      if (k == i && finishedJob->at(i)) continue;
-      // cout aqui da tentativa
+      if (k == i && finishedJob->at(i) || finishedJob->at(k)) continue;
+
       auto askMem = needMems->at(k) - hasMems->at(k);
+
+      Debug::cout(Debug::Level::info, "Há " + std::to_string(available) + " de"
+        + " memória disponível.");
+      Debug::cout(Debug::Level::info, "Processo " + std::to_string(ids->at(k))
+        + " com " + std::to_string(hasMems->at(k)) + " que precisa de "
+        + std::to_string(needMems->at(k)) +
+        + " quer utilizar " + std::to_string(askMem) + " da memória. Se isso "
+        + "acontecer, ficará " + std::to_string(int(available-askMem)) +
+        " do recurso disponível enquanto ele trabalha.");
+
       if (available >= askMem && !finishedJob->at(k)) {
         infiniteLoop = false;
         finishedJob->at(k) = true;
         available += hasMems->at(k);
-        // cout aqui
+        Debug::cout(Debug::Level::info,
+          "Processo " + std::to_string(ids->at(k)) +
+          + " com " + std::to_string(hasMems->at(k)) + " que precisa de "
+          + std::to_string(needMems->at(k)) + " usará mais " +
+          std::to_string(askMem) + " da memória, terminará seu trabalho e " +
+          "deixará " + std::to_string(available) + " do recurso disponível.");
       }
     }
 
@@ -83,9 +104,11 @@ bool MemoryManager::banker(std::vector<unsigned int> *ids,
 
   if (available == memorySize) {
     safe = true;
-    // cout aqui de seguro
+    Debug::cout(Debug::Level::info,
+      "A requisição gera um estado seguro, logo pode ser atendida.");
   } else {
-    // cout aqui de estado inseguro
+    Debug::cout(Debug::Level::info,
+      "A requisição gera um estado inseguro, logo não pode ser atendida.");
   }
 
   return safe;

@@ -49,6 +49,7 @@ void OperatingSystem::ExecuteTestCode() {
   Debug::cout(Debug::Level::trace, "OperatingSystem::ExecuteTestCode()");
   Simulator* simulator = Simulator::getInstance();
 
+  srand(time(NULL));
   // better use a number where memorySize % number = 0
   // if change here, need update Process::exec
   auto nro_process = 5;
