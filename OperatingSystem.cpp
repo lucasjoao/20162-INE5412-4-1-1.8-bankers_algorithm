@@ -50,7 +50,7 @@ void OperatingSystem::ExecuteTestCode() {
   Simulator* simulator = Simulator::getInstance();
 
   // better use a number where memorySize % number = 0
-  // if change here, need update Process:exec
+  // if change here, need update Process::exec
   auto nro_process = 5;
   Debug::cout(Debug::Level::info,
     "Recurso utilizado na aplicação do algoritmo do banqueiro é a memória. " +
@@ -74,7 +74,7 @@ void OperatingSystem::ExecuteTestCode() {
   }
 
   MemoryManager *memoryManager = OperatingSystem::Memory_Manager();
-  // ideal way is pass processes
+  // ideal way is pass processes, but i did this...
   memoryManager->banker(ids, hasMems, needMems, 0, 0);
 
   simulator->stop();

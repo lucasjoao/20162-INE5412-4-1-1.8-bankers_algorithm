@@ -28,7 +28,41 @@ MemoryManager::~MemoryManager() {
 bool MemoryManager::banker(std::vector<unsigned int> *ids,
     std::vector<unsigned int> *hasMems, std::vector<unsigned int> *needMems,
     int i, unsigned int request) {
+
   Debug::cout(Debug::Level::trace, "MemoryManager::banker");
+
+  auto used = 0;
+  std::vector<bool>* finishedJob;
+  for (int j = 0; j < ids->size(); j++) {
+    used += hasMems->at(j);
+    finishedJob->push_back(false);
+  }
+  auto memorySize = Traits<MemoryManager>::physicalMemorySize;
+  auto available = memorySize - used;
+
+  bool safe = false;
+  if (request > available) {
+    return safe;
+  } else {
+    // available -= request;
+    // preciso atualizar quanto ele tem de memória aqui
+    bool dontNeedMore = request + hasMems->at(i) >= needMems->at(i);
+    if (dontNeedMore) {
+      available += hasMems->at(i);
+      finishedJob->at(i) = true;
+    } else {
+      bool iterateAgain = true;
+      while (iterateAgain) {
+        // aplicar lógica do iterateAgain no começo e se muda
+        for (int k = 0; k < ids->size(); k++) {
+          if (k == i && finishedJob->at(i)) continue;
+          auto askMem = needMems->at(i) - hasMems->at(i);
+          // se available >= askMem, então ele executa e atualiza tudo
+
+        }
+      }
+    }
+  }
 
 }
 

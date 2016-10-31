@@ -63,7 +63,8 @@ Process* Process::exec() { /*static*/
   auto memorySize = Traits<MemoryManager>::physicalMemorySize;
 
   auto hasMem = rand() % int(memorySize/nro_process) + 1;
-  auto needMem = hasMem + (rand() % hasMem + 1);
+  auto needMem = hasMem + (rand() % memorySize);
+  needMem = needMem > memorySize ? hasMem + (rand() % hasMem + 1) : needMem;
 
   Process* newProcess = new Process(0);
   newProcess->setNeedMem(needMem);
