@@ -59,21 +59,7 @@ unsigned int Process::getId() const {
 Process* Process::exec() { /*static*/
   Debug::cout(Debug::Level::trace, "Process::exec()");
 
-  auto nro_process = 5;
-  auto memorySize = Traits<MemoryManager>::physicalMemorySize;
-
-  auto hasMem = rand() % int(memorySize/nro_process) + 1;
-  auto needMem = hasMem + (rand() % memorySize);
-  needMem = needMem > memorySize ? hasMem + (rand() % hasMem + 1) : needMem;
-
   Process* newProcess = new Process(0);
-  newProcess->setNeedMem(needMem);
-  newProcess->setHasMem(hasMem);
-
-  Debug::cout(Debug::Level::info,
-    "Processo com ID " + std::to_string(newProcess->getId()) +
-    " tem " + std::to_string(newProcess->getHasMem()) + " e precisa de " +
-    std::to_string(newProcess->getNeedMem()) + " do recurso memória");
 
   return newProcess;
 }

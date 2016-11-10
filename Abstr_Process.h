@@ -78,25 +78,9 @@ public: // For simulation use only. Do not change
 private: // for simulator use only. Do not change
     Entity* _entity; //used only by the simulator
 public: // USER DEFINED
-    void setHasMem(unsigned int hasMem) {
-      _hasMem = hasMem;
-    }
-
-    void setNeedMem(unsigned int needMem) {
-      _needMem = needMem;
-    }
-
-    unsigned int getHasMem() {
-      return _hasMem;
-    }
-
-    unsigned int getNeedMem() {
-      return _needMem;
-    }
 
 private: // USER DEFINED
-    unsigned int _hasMem;
-    unsigned int _needMem;
+
 };
 
 #endif	/* PROCESS_H */
