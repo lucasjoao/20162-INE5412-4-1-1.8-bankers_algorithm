@@ -1,3 +1,7 @@
+### this project specific ###
+
+vpl_execution
+
 ### Folders ###
 
 **/outputs/*
@@ -106,3 +110,13 @@ bh_unicode_properties.cache
 # Sublime-github package stores a github token in this file
 # https://packagecontrol.io/packages/sublime-github
 GitHub.sublime-settings
+
+# Created by https://www.gitignore.io/api/netbeans
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
