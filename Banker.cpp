@@ -22,11 +22,16 @@ Banker::~Banker() {
 void Banker::addExistenceResources(int resource, int amount) {
   Debug::cout(Debug::Level::trace, "Banker::addExistenceResources(" +
     std::to_string(resource) + ", " + std::to_string(amount) + ")");
+
   this->_existenceResources->at(resource-1) = amount;
 }
 
 void Banker::addProcessNeeds(int process, int resource, int amount) {
-// TO-DO
+  Debug::cout(Debug::Level::trace, "Banker::addProcessNeeds(" +
+    std::to_string(process) + ", " + std::to_string(resource) + ", " +
+    std::to_string(amount) + ")");
+
+  this->_processNeeds->at(process-1).at(resource-1) = amount;
 }
 
 bool Banker::request(int process, int resource, int amount) {
