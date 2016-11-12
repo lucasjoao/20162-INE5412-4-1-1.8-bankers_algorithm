@@ -189,7 +189,10 @@ void OperatingSystem::ExecuteTestCode() {
 
   switch (executionStep) {
     case 0:  // executionStep is initialized with 0
-
+      banker->addExistenceResources(1, 6);
+      banker->addExistenceResources(2, 3);
+      banker->addExistenceResources(3, 4);
+      banker->addExistenceResources(4, 2);
       break;
     case 1:
       break;
@@ -205,6 +208,7 @@ void OperatingSystem::ExecuteTestCode() {
   entity->getAttribute("ExecutionStep")->setValue(std::to_string(executionStep++));
   // future event when execution will advance
   simulator->insertEvent(timeNow + 10.0, module, entity);
+  simulator->stop();
 }
 
  /*
