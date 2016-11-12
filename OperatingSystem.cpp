@@ -11,6 +11,7 @@
 #include "HW_CPU.h"
 #include "HW_Machine.h"
 #include "Simulator.h"
+#include "Banker.h"
 
 
 void OperatingSystem::LoadApplication(Application* app, MMU::PhysicalAddress address) {
@@ -182,8 +183,13 @@ void OperatingSystem::ExecuteTestCode() {
   }
   */
 
+  int numberOfResources = 4;
+  int numberOfProcesses = 5;
+  Banker* banker = new Banker(numberOfResources, numberOfProcesses);
+
   switch (executionStep) {
     case 0:  // executionStep is initialized with 0
+
       break;
     case 1:
       break;
