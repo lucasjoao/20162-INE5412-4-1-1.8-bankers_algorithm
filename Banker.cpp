@@ -48,11 +48,11 @@ bool Banker::request(int process, int resource, int amount) {
     this->_numberOfProcesses, false);
   int resourceID = resource - 1;
   int processID = process - 1;
-  bool safe = false;
 
-  if (amount > this->_availableResources->at(resourceID)) return safe;
+  // pedindo mais do que tem disponivel, inseguro ***TMP***
+  if (amount > this->_availableResources->at(resourceID)) return false;
 
-  // TMP: check if amount is enough to finish job
+  // pediu mais do que ele precisa ***TMP***
   if (amount >= this->_processNeeds->at(processID).at(resourceID)) {
     bool dontNeedMore = true;
     for (int i = 0; i < this->_numberOfResources; i++) {
@@ -63,6 +63,7 @@ bool Banker::request(int process, int resource, int amount) {
         break;
       }
     }
+    // nao precisa de mais nada, entao terminou o seu trabalho ***TMP***
     if (dontNeedMore) {
       this->_availableResources->at(resourceID) += this->_currentAllocation->
         at(processID).at(resourceID);
@@ -70,14 +71,51 @@ bool Banker::request(int process, int resource, int amount) {
       this->_processNeeds->at(processID).at(resourceID) = 0;
       finishedJob->at(processID) = true;
     }
-  } else {
+  } else { // ainda precisa de recursos
     this->_availableResources->at(resourceID) -= amount;
     this->_currentAllocation->at(processID).at(resourceID) += amount;
     this->_processNeeds->at(processID).at(resourceID) -= amount;
   }
 
+  bool infiniteLoop;
+  bool haveWorkToDo = true;
+  while (haveWorkToDo) {
+    infiniteLoop = true;
+    for (int j = 0; j < this->_numberOfProcesses; j++) {
+      if (finishedJob->at(j)) continue;
 
+      // passo 1 do algoritmo no livro
+      bool lessThan = true;
+      for (int k = 0; k < this->_numberOfResources; k++) {
+        if (this->_processNeeds->at(j).at(k) > this->_availableResources->at(k))
+          lessThan = false;
+      }
 
+      // passo 2 do algoritmo no livro
+      if (lessThan) {
+        for (int = l = 0; l < this->_numberOfResources; l++) {
+          this->_availableResources->at(j).at(l) += this->_currentAllocation->
+            at(j).at(l);
+          this->_currentAllocation->at(j).at(l) = 0;
+          this->_processNeeds->at(j).at(l) = 0;
+        }
+        finishedJob->at(j) = true;
+        infiniteLoop = false;
+      }
+    }
+
+    haveWorkToDo = false;
+    for (unsigned int m = 0; m < finishedJob->size(); m++) {
+      if (!finishedJob->at(m)) {
+        haveWorkToDo = true;
+        break;
+      }
+    }
+
+    if (infiniteLoop) break;
+  }
+
+  return haveWorkToDo ? false : true;
 }
 
 void Banker::free(int process, int resource) {
