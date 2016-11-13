@@ -5,6 +5,9 @@
 
 class Banker {
 private:
+  int _numberOfResources;
+  int _numberOfProcesses;
+
   std::vector<int>* _existenceResources;
   std::vector<int>* _availableResources;
   std::vector<std::vector<int>>* _currentAllocation;
