@@ -90,13 +90,14 @@ void OperatingSystem::ExecuteTestCode() {
   int numberOfProcesses = 5;
   Banker* banker = new Banker(numberOfResources, numberOfProcesses);
 
-  Debug::cout(Debug::Level::info,
-    "Haverá " + std::to_string(numberOfResources) + " recursos na simulação");
-  Debug::cout(Debug::Level::info,
-    "Haverá " + std::to_string(numberOfProcesses) + " processos na simulação");
-
   switch (executionStep) {
     case 0:  // executionStep is initialized with 0
+      Debug::cout(Debug::Level::info,
+        "Haverá " + std::to_string(numberOfResources) +
+        " recurso(s) na simulação");
+      Debug::cout(Debug::Level::info,
+        "Haverá " + std::to_string(numberOfProcesses) +
+        " processo(s) na simulação");
       banker->addExistenceResources(1, 6);
       banker->addExistenceResources(2, 3);
       banker->addExistenceResources(3, 4);
@@ -107,29 +108,35 @@ void OperatingSystem::ExecuteTestCode() {
       banker->addProcessNeeds(1, 2, 1);
       banker->addProcessNeeds(1, 3, 1);
       banker->addProcessNeeds(1, 4, 1);
-      break;
-    case 2:
       banker->addProcessNeeds(2, 1, 0);
       banker->addProcessNeeds(2, 2, 2);
       banker->addProcessNeeds(2, 3, 1);
       banker->addProcessNeeds(2, 4, 2);
-      break;
-    case 3:
       banker->addProcessNeeds(3, 1, 4);
       banker->addProcessNeeds(3, 2, 2);
       banker->addProcessNeeds(3, 3, 1);
       banker->addProcessNeeds(3, 4, 0);
-      break;
-    case 4:
       banker->addProcessNeeds(4, 1, 1);
       banker->addProcessNeeds(4, 2, 1);
       banker->addProcessNeeds(4, 3, 1);
       banker->addProcessNeeds(4, 4, 1);
-    case 5:
       banker->addProcessNeeds(5, 1, 2);
       banker->addProcessNeeds(5, 2, 1);
       banker->addProcessNeeds(5, 3, 1);
       banker->addProcessNeeds(5, 4, 0);
+      banker->request(2, 2, 1);
+      break;
+    case 2:
+      banker->request(1, 1, 3);
+      banker->request(3, 1, 1);
+      banker->request(4, 1, 1);
+      banker->request(3, 2, 1);
+      banker->request(4, 2, 1);
+      banker->request(1, 3, 1);
+      banker->request(3, 3, 1);
+      banker->request(1, 4, 1);
+      banker->request(4, 4, 1);
+      break;
     default:
       break;
   }
@@ -139,7 +146,7 @@ void OperatingSystem::ExecuteTestCode() {
   // future event when execution will advance
   simulator->insertEvent(timeNow + 10.0, module, entity);
 
-  if (executionStep == 100) simulator->stop();
+  if (executionStep == 3) simulator->stop();
 }
 
  /*

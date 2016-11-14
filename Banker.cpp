@@ -27,17 +27,18 @@ void Banker::addExistenceResources(int resource, int amount) {
   Debug::cout(Debug::Level::trace, "Banker::addExistenceResources(" +
     std::to_string(resource) + ", " + std::to_string(amount) + ")");
   Debug::cout(Debug::Level::info, "Existe " + std::to_string(amount) +
-    " unidades do recurso " + std::to_string(resource));
+    " unidade(s) do recurso " + std::to_string(resource));
 
   this->_existenceResources->at(resource-1) = amount;
+  this->_availableResources->at(resource-1) = amount;
 }
 
 void Banker::addProcessNeeds(int process, int resource, int amount) {
   Debug::cout(Debug::Level::trace, "Banker::addProcessNeeds(" +
     std::to_string(process) + ", " + std::to_string(resource) + ", " +
     std::to_string(amount) + ")");
-  Debug::cout(Debug::Level::info, "O processo" + std::to_string(process) +
-    " precisa de " + std::to_string(amount) + " unidades do recurso " +
+  Debug::cout(Debug::Level::info, "O processo " + std::to_string(process) +
+    " precisa de " + std::to_string(amount) + " unidade(s) do recurso " +
     std::to_string(resource));
 
   this->_processNeeds->at(process-1).at(resource-1) = amount;
@@ -48,16 +49,18 @@ bool Banker::request(int process, int resource, int amount) {
     std::to_string(process) + ", " + std::to_string(resource) + ", " +
     std::to_string(amount) + ")");
   Debug::cout(Debug::Level::info, "O processo " + std::to_string(process) +
-    "solicitou " + std::to_string(amount) + " unidades do recurso " +
+    " solicitou " + std::to_string(amount) + " unidade(s) do recurso " +
     std::to_string(resource));
 
   int resourceID = resource - 1;
   int processID = process - 1;
 
+  Debug::cout(Debug::Level::info, "PROBLEMA::" + std::to_string(this->_processNeeds->at(processID).at(resourceID)));
+
   if (amount > this->_processNeeds->at(processID).at(resourceID)) {
     Debug::cout(Debug::Level::info, "Ele só precisa de " +
       std::to_string(this->_processNeeds->at(processID).at(resourceID)) +
-      " unidades e solicitou um valor maior, então não é possível o atender");
+      " unidade(s) e solicitou um valor maior, então não é possível o atender");
 
     return false;
   }
@@ -84,7 +87,7 @@ bool Banker::algorithm(int process, int resource, int amount) {
     std::to_string(amount) + ")");
   Debug::cout(Debug::Level::info,
     "Vamos ver se a solicitação do processo " + std::to_string(process) +
-    "de " + std::to_string(amount) + " unidades do recurso " +
+    "de " + std::to_string(amount) + " unidade(s) do recurso " +
     std::to_string(resource) + " gera um estado inseguro ou não");
 
   std::vector<bool>* finishedJob = new std::vector<bool>(
@@ -93,8 +96,8 @@ bool Banker::algorithm(int process, int resource, int amount) {
   int processID = process - 1;
 
   std::vector<int>* aRfixBug = this->_availableResources;
-  std::vector<int>* cAfixBug = this->_currentAllocation;
-  std::vector<int>* pNfixBug = this->_processNeeds;
+  std::vector<std::vector<int>>* cAfixBug = this->_currentAllocation;
+  std::vector<std::vector<int>>* pNfixBug = this->_processNeeds;
 
   if (amount > this->_availableResources->at(resourceID)) {
     Debug::cout(Debug::Level::info,
@@ -153,9 +156,9 @@ bool Banker::algorithm(int process, int resource, int amount) {
           "Processo " + std::to_string(j) + " pode pegar todos os recursos " +
           "necessários, terminar o seu trabalho e devolver os recursos");
 
-        for (int = l = 0; l < this->_numberOfResources; l++) {
-          this->_availableResources->at(j).at(l) += this->_currentAllocation->
-            at(j).at(l);
+        for (int l = 0; l < this->_numberOfResources; l++) {
+          this->_availableResources->at(l) += this->_currentAllocation->at(j).
+            at(l);
           this->_currentAllocation->at(j).at(l) = 0;
           this->_processNeeds->at(j).at(l) = 0;
         }
@@ -201,9 +204,9 @@ void Banker::free(int process, int resource) {
     this->_currentAllocation->at(processID).at(resourceID) -= 1;
     this->_processNeeds->at(processID).at(resourceID) += 1;
   } else {
-    Debug::cout(Debug::Level::info, "Não é possível liberar 1 unidade do " +
-      "recurso " + std::to_string(resource) + " do processo " +
-      std::to_string(process) + " porque ele não possui nenhuma unidade desse "
-      + "recurso.");
+    Debug::cout(Debug::Level::info,
+      "Não é possível liberar 1 unidade do recurso " +
+      std::to_string(resource) + " do processo " + std::to_string(process) +
+      " porque ele não possui nenhuma unidade desse recurso.");
   }
 }
