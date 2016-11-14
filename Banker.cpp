@@ -26,6 +26,8 @@ Banker::~Banker() {
 void Banker::addExistenceResources(int resource, int amount) {
   Debug::cout(Debug::Level::trace, "Banker::addExistenceResources(" +
     std::to_string(resource) + ", " + std::to_string(amount) + ")");
+  Debug::cout(Debug::Level::info, "Existe " + std::to_string(amount) +
+    " unidades do recurso " + std::to_string(resource));
 
   this->_existenceResources->at(resource-1) = amount;
 }
@@ -34,6 +36,9 @@ void Banker::addProcessNeeds(int process, int resource, int amount) {
   Debug::cout(Debug::Level::trace, "Banker::addProcessNeeds(" +
     std::to_string(process) + ", " + std::to_string(resource) + ", " +
     std::to_string(amount) + ")");
+  Debug::cout(Debug::Level::info, "O processo" + std::to_string(process) +
+    " precisa de " + std::to_string(amount) + " unidades do recurso " +
+    std::to_string(resource));
 
   this->_processNeeds->at(process-1).at(resource-1) = amount;
 }
@@ -42,20 +47,33 @@ bool Banker::request(int process, int resource, int amount) {
   Debug::cout(Debug::Level::trace, "Banker::request(" +
     std::to_string(process) + ", " + std::to_string(resource) + ", " +
     std::to_string(amount) + ")");
+  Debug::cout(Debug::Level::info, "O processo " + std::to_string(process) +
+    "solicitou " + std::to_string(amount) + " unidades do recurso " +
+    std::to_string(resource));
 
   int resourceID = resource - 1;
   int processID = process - 1;
 
-  // assumo que ele nao pode solicitar mais do que precisa ***TMP***
-  if (amount > this->_processNeeds->at(processID).at(resourceID))
+  if (amount > this->_processNeeds->at(processID).at(resourceID)) {
+    Debug::cout(Debug::Level::info, "Ele só precisa de " +
+      std::to_string(this->_processNeeds->at(processID).at(resourceID)) +
+      " unidades e solicitou um valor maior, então não é possível o atender");
+
     return false;
+  }
 
   if (this->algorithm(process, resource, amount)) {
+    Debug::cout(Debug::Level::info,
+      "A solicitação gera um estado seguro, então é possível atendê-la.");
+
     this->_availableResources->at(resourceID) -= amount;
     this->_currentAllocation->at(processID).at(resourceID) += amount;
     this->_processNeeds->at(processID).at(resourceID) -= amount;
     return true;
   }
+
+  Debug::cout(Debug::Level::info,
+    "A solicitação gera um estado inseguro, então não é possível atendê-la.");
 
   return false;
 }
@@ -64,16 +82,27 @@ bool Banker::algorithm(int process, int resource, int amount) {
   Debug::cout(Debug::Level::trace, "Banker::algorithm(" +
     std::to_string(process) + ", " + std::to_string(resource) + ", " +
     std::to_string(amount) + ")");
+  Debug::cout(Debug::Level::info,
+    "Vamos ver se a solicitação do processo " + std::to_string(process) +
+    "de " + std::to_string(amount) + " unidades do recurso " +
+    std::to_string(resource) + " gera um estado inseguro ou não");
 
   std::vector<bool>* finishedJob = new std::vector<bool>(
     this->_numberOfProcesses, false);
   int resourceID = resource - 1;
   int processID = process - 1;
 
-  // pedindo mais do que tem disponivel, inseguro ***TMP***
-  if (amount > this->_availableResources->at(resourceID)) return false;
+  std::vector<int>* aRfixBug = this->_availableResources;
+  std::vector<int>* cAfixBug = this->_currentAllocation;
+  std::vector<int>* pNfixBug = this->_processNeeds;
 
-  // pediu tudo que ele precisa ***TMP***
+  if (amount > this->_availableResources->at(resourceID)) {
+    Debug::cout(Debug::Level::info,
+      "Foi solicitado mais recursos do que há disponível. Não pode!");
+
+    return false;
+  }
+
   if (amount == this->_processNeeds->at(processID).at(resourceID)) {
     bool dontNeedMore = true;
     for (int i = 0; i < this->_numberOfResources; i++) {
@@ -84,15 +113,21 @@ bool Banker::algorithm(int process, int resource, int amount) {
         break;
       }
     }
-    // nao precisa de mais nada, entao terminou o seu trabalho ***TMP***
+
     if (dontNeedMore) {
+      Debug::cout(Debug::Level::info,
+        "A solicitação irá fazer com que o processo termine o seu trabalho");
+
       this->_availableResources->at(resourceID) += this->_currentAllocation->
         at(processID).at(resourceID);
       this->_currentAllocation->at(processID).at(resourceID) = 0;
       this->_processNeeds->at(processID).at(resourceID) = 0;
       finishedJob->at(processID) = true;
     }
-  } else { // ainda precisa de recursos
+  } else {
+    Debug::cout(Debug::Level::info,
+      "A solicitação não é suficiente para que o processo termine");
+
     this->_availableResources->at(resourceID) -= amount;
     this->_currentAllocation->at(processID).at(resourceID) += amount;
     this->_processNeeds->at(processID).at(resourceID) -= amount;
@@ -114,6 +149,10 @@ bool Banker::algorithm(int process, int resource, int amount) {
 
       // passo 2 do algoritmo no livro
       if (lessThan) {
+        Debug::cout(Debug::Level::info,
+          "Processo " + std::to_string(j) + " pode pegar todos os recursos " +
+          "necessários, terminar o seu trabalho e devolver os recursos");
+
         for (int = l = 0; l < this->_numberOfResources; l++) {
           this->_availableResources->at(j).at(l) += this->_currentAllocation->
             at(j).at(l);
@@ -128,14 +167,23 @@ bool Banker::algorithm(int process, int resource, int amount) {
     haveWorkToDo = false;
     for (unsigned int m = 0; m < finishedJob->size(); m++) {
       if (!finishedJob->at(m)) {
+        Debug::cout(Debug::Level::info, "Nem todos os processos terminaram!");
+
         haveWorkToDo = true;
         break;
       }
     }
 
-    if (infiniteLoop) break;
+    if (infiniteLoop) {
+      Debug::cout(Debug::Level::info, "Não há mais nada que possa ser feito!");
+
+      break;
+    }
   }
 
+  this->_availableResources = aRfixBug;
+  this->_currentAllocation = cAfixBug;
+  this->_processNeeds = pNfixBug;
   return haveWorkToDo ? false : true;
 }
 
@@ -146,6 +194,9 @@ void Banker::free(int process, int resource) {
   int resourceID = resourceID - 1;
 
   if (this->_currentAllocation->at(processID).at(resourceID) != 0) {
+    Debug::cout(Debug::Level::info, "O processo " + std::to_string(process) +
+      " liberou 1 unidade do recurso " + std::to_string(resource));
+
     this->_availableResources->at(resourceID) += 1;
     this->_currentAllocation->at(processID).at(resourceID) -= 1;
     this->_processNeeds->at(processID).at(resourceID) += 1;
