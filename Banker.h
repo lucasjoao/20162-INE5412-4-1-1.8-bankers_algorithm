@@ -20,6 +20,7 @@ public:
   void addExistenceResources(int resource, int amount);
   void addProcessNeeds(int process, int resource, int amount);
   bool request(int process, int resource, int amount);
+  bool algorithm(int process, int resource, int amount);
   void free(int process, int resource);
 };
 

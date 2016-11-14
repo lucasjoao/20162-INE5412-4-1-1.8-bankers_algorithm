@@ -39,8 +39,29 @@ void Banker::addProcessNeeds(int process, int resource, int amount) {
 }
 
 bool Banker::request(int process, int resource, int amount) {
-// COLOCAR ISSO EM UM MÉTODO SEPARADO QUE SEJA DO ALGORITMO E AQUI SÓ FAÇA CHAMADA PARA ELE E ESTATÍSTICA
   Debug::cout(Debug::Level::trace, "Banker::request(" +
+    std::to_string(process) + ", " + std::to_string(resource) + ", " +
+    std::to_string(amount) + ")");
+
+  int resourceID = resource - 1;
+  int processID = process - 1;
+
+  // assumo que ele nao pode solicitar mais do que precisa ***TMP***
+  if (amount > this->_processNeeds->at(processID).at(resourceID))
+    return false;
+
+  if (this->algorithm(process, resource, amount)) {
+    this->_availableResources->at(resourceID) -= amount;
+    this->_currentAllocation->at(processID).at(resourceID) += amount;
+    this->_processNeeds->at(processID).at(resourceID) -= amount;
+    return true;
+  }
+
+  return false;
+}
+
+bool Banker::algorithm(int process, int resource, int amount) {
+  Debug::cout(Debug::Level::trace, "Banker::algorithm(" +
     std::to_string(process) + ", " + std::to_string(resource) + ", " +
     std::to_string(amount) + ")");
 
@@ -52,8 +73,8 @@ bool Banker::request(int process, int resource, int amount) {
   // pedindo mais do que tem disponivel, inseguro ***TMP***
   if (amount > this->_availableResources->at(resourceID)) return false;
 
-  // pediu mais do que ele precisa ***TMP***
-  if (amount >= this->_processNeeds->at(processID).at(resourceID)) {
+  // pediu tudo que ele precisa ***TMP***
+  if (amount == this->_processNeeds->at(processID).at(resourceID)) {
     bool dontNeedMore = true;
     for (int i = 0; i < this->_numberOfResources; i++) {
       if (i != resourceID &&
