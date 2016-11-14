@@ -22,6 +22,7 @@ public:
   bool request(int process, int resource, int amount);
   bool algorithm(int process, int resource, int amount);
   void free(int process, int resource);
+  void printHelperDebug(int process);
 };
 
 #endif /* BANKER_H */

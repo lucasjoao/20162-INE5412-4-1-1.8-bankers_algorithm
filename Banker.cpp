@@ -55,7 +55,7 @@ bool Banker::request(int process, int resource, int amount) {
   int resourceID = resource - 1;
   int processID = process - 1;
 
-  Debug::cout(Debug::Level::info, "PROBLEMA::" + std::to_string(this->_processNeeds->at(processID).at(resourceID)));
+  this->printHelperDebug(process);
 
   if (amount > this->_processNeeds->at(processID).at(resourceID)) {
     Debug::cout(Debug::Level::info, "Ele só precisa de " +
@@ -67,7 +67,7 @@ bool Banker::request(int process, int resource, int amount) {
 
   if (this->algorithm(process, resource, amount)) {
     Debug::cout(Debug::Level::info,
-      "A solicitação gera um estado seguro, então é possível atendê-la.");
+      "A solicitação gera um estado seguro, então é possível atendê-la");
 
     this->_availableResources->at(resourceID) -= amount;
     this->_currentAllocation->at(processID).at(resourceID) += amount;
@@ -76,7 +76,7 @@ bool Banker::request(int process, int resource, int amount) {
   }
 
   Debug::cout(Debug::Level::info,
-    "A solicitação gera um estado inseguro, então não é possível atendê-la.");
+    "A solicitação gera um estado inseguro, então não é possível atendê-la");
 
   return false;
 }
@@ -87,7 +87,7 @@ bool Banker::algorithm(int process, int resource, int amount) {
     std::to_string(amount) + ")");
   Debug::cout(Debug::Level::info,
     "Vamos ver se a solicitação do processo " + std::to_string(process) +
-    "de " + std::to_string(amount) + " unidade(s) do recurso " +
+    " de " + std::to_string(amount) + " unidade(s) do recurso " +
     std::to_string(resource) + " gera um estado inseguro ou não");
 
   std::vector<bool>* finishedJob = new std::vector<bool>(
@@ -95,9 +95,9 @@ bool Banker::algorithm(int process, int resource, int amount) {
   int resourceID = resource - 1;
   int processID = process - 1;
 
-  std::vector<int>* aRfixBug = this->_availableResources;
-  std::vector<std::vector<int>>* cAfixBug = this->_currentAllocation;
-  std::vector<std::vector<int>>* pNfixBug = this->_processNeeds;
+  std::vector<int> aRfixBug = *this->_availableResources;
+  std::vector<std::vector<int>> cAfixBug = *this->_currentAllocation;
+  std::vector<std::vector<int>> pNfixBug = *this->_processNeeds;
 
   if (amount > this->_availableResources->at(resourceID)) {
     Debug::cout(Debug::Level::info,
@@ -143,14 +143,12 @@ bool Banker::algorithm(int process, int resource, int amount) {
     for (int j = 0; j < this->_numberOfProcesses; j++) {
       if (finishedJob->at(j)) continue;
 
-      // passo 1 do algoritmo no livro
       bool lessThan = true;
       for (int k = 0; k < this->_numberOfResources; k++) {
         if (this->_processNeeds->at(j).at(k) > this->_availableResources->at(k))
           lessThan = false;
       }
 
-      // passo 2 do algoritmo no livro
       if (lessThan) {
         Debug::cout(Debug::Level::info,
           "Processo " + std::to_string(j) + " pode pegar todos os recursos " +
@@ -184,9 +182,9 @@ bool Banker::algorithm(int process, int resource, int amount) {
     }
   }
 
-  this->_availableResources = aRfixBug;
-  this->_currentAllocation = cAfixBug;
-  this->_processNeeds = pNfixBug;
+  *this->_availableResources = aRfixBug;
+  *this->_currentAllocation = cAfixBug;
+  *this->_processNeeds = pNfixBug;
   return haveWorkToDo ? false : true;
 }
 
@@ -207,6 +205,34 @@ void Banker::free(int process, int resource) {
     Debug::cout(Debug::Level::info,
       "Não é possível liberar 1 unidade do recurso " +
       std::to_string(resource) + " do processo " + std::to_string(process) +
-      " porque ele não possui nenhuma unidade desse recurso.");
+      " porque ele não possui nenhuma unidade desse recurso");
   }
+}
+
+void Banker::printHelperDebug(int process) {
+  Debug::cout(Debug::Level::trace,
+    "Banker::printHelperDebug(" + std::to_string(process) + ")");
+
+  auto processID = process - 1;
+
+  Debug::cout(Debug::Level::info,
+    "availableResources do processo " + std::to_string(process) + " é: " +
+    std::to_string(_availableResources->at(0)) + " " +
+    std::to_string(_availableResources->at(1)) + " " +
+    std::to_string(_availableResources->at(2)) + " " +
+    std::to_string(_availableResources->at(3)));
+
+  Debug::cout(Debug::Level::info,
+    "currentAllocation do processo " + std::to_string(process) + " é: " +
+    std::to_string(_currentAllocation->at(processID).at(0)) + " " +
+    std::to_string(_currentAllocation->at(processID).at(1)) + " " +
+    std::to_string(_currentAllocation->at(processID).at(2)) + " " +
+    std::to_string(_currentAllocation->at(processID).at(3)));
+
+  Debug::cout(Debug::Level::info,
+    "processNeeds  do processo " + std::to_string(process) + " é: " +
+    std::to_string(_processNeeds->at(processID).at(0)) + " " +
+    std::to_string(_processNeeds->at(processID).at(1)) + " " +
+    std::to_string(_processNeeds->at(processID).at(2)) + " " +
+    std::to_string(_processNeeds->at(processID).at(3)));
 }

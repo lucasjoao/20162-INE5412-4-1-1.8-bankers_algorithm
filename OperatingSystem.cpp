@@ -102,8 +102,6 @@ void OperatingSystem::ExecuteTestCode() {
       banker->addExistenceResources(2, 3);
       banker->addExistenceResources(3, 4);
       banker->addExistenceResources(4, 2);
-      break;
-    case 1:
       banker->addProcessNeeds(1, 1, 4);
       banker->addProcessNeeds(1, 2, 1);
       banker->addProcessNeeds(1, 3, 1);
@@ -124,18 +122,21 @@ void OperatingSystem::ExecuteTestCode() {
       banker->addProcessNeeds(5, 2, 1);
       banker->addProcessNeeds(5, 3, 1);
       banker->addProcessNeeds(5, 4, 0);
+      banker->request(1, 1, 3);
+      banker->request(1, 3, 1);
+      banker->request(1, 4, 1);
       banker->request(2, 2, 1);
+      banker->request(3, 1, 1);
+      banker->request(3, 2, 1);
+      banker->request(3, 3, 1);
+      banker->request(4, 1, 1);
+      banker->request(4, 2, 1);
+      banker->request(4, 4, 1);
+      break;
+    case 1:
+
       break;
     case 2:
-      banker->request(1, 1, 3);
-      banker->request(3, 1, 1);
-      banker->request(4, 1, 1);
-      banker->request(3, 2, 1);
-      banker->request(4, 2, 1);
-      banker->request(1, 3, 1);
-      banker->request(3, 3, 1);
-      banker->request(1, 4, 1);
-      banker->request(4, 4, 1);
       break;
     default:
       break;
@@ -146,7 +147,7 @@ void OperatingSystem::ExecuteTestCode() {
   // future event when execution will advance
   simulator->insertEvent(timeNow + 10.0, module, entity);
 
-  if (executionStep == 3) simulator->stop();
+  if (executionStep == 2) simulator->stop();
 }
 
  /*
