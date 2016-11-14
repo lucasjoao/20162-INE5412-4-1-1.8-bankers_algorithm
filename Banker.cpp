@@ -119,5 +119,19 @@ bool Banker::request(int process, int resource, int amount) {
 }
 
 void Banker::free(int process, int resource) {
-// TO-DO
+  Debug::cout(Debug::Level::trace, "Banker::free(" + std::to_string(process) + ", " + std::to_string(resource) + ")");
+
+  int processID = process - 1;
+  int resourceID = resourceID - 1;
+
+  if (this->_currentAllocation->at(processID).at(resourceID) != 0) {
+    this->_availableResources->at(resourceID) += 1;
+    this->_currentAllocation->at(processID).at(resourceID) -= 1;
+    this->_processNeeds->at(processID).at(resourceID) += 1;
+  } else {
+    Debug::cout(Debug::Level::info, "Não é possível liberar 1 unidade do " +
+      "recurso " + std::to_string(resource) + " do processo " +
+      std::to_string(process) + " porque ele não possui nenhuma unidade desse "
+      + "recurso.");
+  }
 }
