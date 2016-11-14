@@ -122,6 +122,7 @@ void OperatingSystem::ExecuteTestCode() {
       banker->addProcessNeeds(5, 2, 1);
       banker->addProcessNeeds(5, 3, 1);
       banker->addProcessNeeds(5, 4, 0);
+      // gerar estado do livro ***TMP***
       banker->request(1, 1, 3);
       banker->request(1, 3, 1);
       banker->request(1, 4, 1);
@@ -132,6 +133,17 @@ void OperatingSystem::ExecuteTestCode() {
       banker->request(4, 1, 1);
       banker->request(4, 2, 1);
       banker->request(4, 4, 1);
+      // primeira solicitação do livro ***TMP***
+      banker->request(2, 3, 1);
+      // segunda solicitação do livro, inseguro ***TMP***
+      banker->request(5, 3, 1);
+      // terceira solicitação pessoal ***TMP***
+      banker->request(2, 4, 2);
+      // quarta solicitação pessoal ***TMP***
+      banker->free(1, 4);
+      banker->request(5, 1, 1);
+      // quinta solicitação pessoal ***TMP***
+      banker->request(5, 3, 1);
       break;
     case 1:
 

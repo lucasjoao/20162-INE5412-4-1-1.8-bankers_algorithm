@@ -55,7 +55,7 @@ bool Banker::request(int process, int resource, int amount) {
   int resourceID = resource - 1;
   int processID = process - 1;
 
-  this->printHelperDebug(process);
+  this->printHelperDebug();
 
   if (amount > this->_processNeeds->at(processID).at(resourceID)) {
     Debug::cout(Debug::Level::info, "Ele só precisa de " +
@@ -72,12 +72,14 @@ bool Banker::request(int process, int resource, int amount) {
     this->_availableResources->at(resourceID) -= amount;
     this->_currentAllocation->at(processID).at(resourceID) += amount;
     this->_processNeeds->at(processID).at(resourceID) -= amount;
+    this->printHelperDebug();
     return true;
   }
 
   Debug::cout(Debug::Level::info,
     "A solicitação gera um estado inseguro, então não é possível atendê-la");
 
+  this->printHelperDebug();
   return false;
 }
 
@@ -88,7 +90,7 @@ bool Banker::algorithm(int process, int resource, int amount) {
   Debug::cout(Debug::Level::info,
     "Vamos ver se a solicitação do processo " + std::to_string(process) +
     " de " + std::to_string(amount) + " unidade(s) do recurso " +
-    std::to_string(resource) + " gera um estado inseguro ou não");
+    std::to_string(resource) + " gera um estado inseguro ou não...");
 
   std::vector<bool>* finishedJob = new std::vector<bool>(
     this->_numberOfProcesses, false);
@@ -126,14 +128,14 @@ bool Banker::algorithm(int process, int resource, int amount) {
       this->_currentAllocation->at(processID).at(resourceID) = 0;
       this->_processNeeds->at(processID).at(resourceID) = 0;
       finishedJob->at(processID) = true;
-    }
-  } else {
-    Debug::cout(Debug::Level::info,
-      "A solicitação não é suficiente para que o processo termine");
+    } else {
+      Debug::cout(Debug::Level::info,
+        "A solicitação não será suficiente para que o processo termine");
 
-    this->_availableResources->at(resourceID) -= amount;
-    this->_currentAllocation->at(processID).at(resourceID) += amount;
-    this->_processNeeds->at(processID).at(resourceID) -= amount;
+      this->_availableResources->at(resourceID) -= amount;
+      this->_currentAllocation->at(processID).at(resourceID) += amount;
+      this->_processNeeds->at(processID).at(resourceID) -= amount;
+    }
   }
 
   bool infiniteLoop;
@@ -168,15 +170,14 @@ bool Banker::algorithm(int process, int resource, int amount) {
     haveWorkToDo = false;
     for (unsigned int m = 0; m < finishedJob->size(); m++) {
       if (!finishedJob->at(m)) {
-        Debug::cout(Debug::Level::info, "Nem todos os processos terminaram!");
-
         haveWorkToDo = true;
         break;
       }
     }
 
     if (infiniteLoop) {
-      Debug::cout(Debug::Level::info, "Não há mais nada que possa ser feito!");
+      Debug::cout(Debug::Level::info,
+        "Na situação atual, não tem como garantir que todos os processos terminarão");
 
       break;
     }
@@ -192,7 +193,7 @@ void Banker::free(int process, int resource) {
   Debug::cout(Debug::Level::trace, "Banker::free(" + std::to_string(process) + ", " + std::to_string(resource) + ")");
 
   int processID = process - 1;
-  int resourceID = resourceID - 1;
+  int resourceID = resource - 1;
 
   if (this->_currentAllocation->at(processID).at(resourceID) != 0) {
     Debug::cout(Debug::Level::info, "O processo " + std::to_string(process) +
@@ -209,30 +210,32 @@ void Banker::free(int process, int resource) {
   }
 }
 
-void Banker::printHelperDebug(int process) {
+void Banker::printHelperDebug() {
   Debug::cout(Debug::Level::trace,
-    "Banker::printHelperDebug(" + std::to_string(process) + ")");
-
-  auto processID = process - 1;
+    "Banker::printHelperDebug()");
 
   Debug::cout(Debug::Level::info,
-    "availableResources do processo " + std::to_string(process) + " é: " +
-    std::to_string(_availableResources->at(0)) + " " +
-    std::to_string(_availableResources->at(1)) + " " +
-    std::to_string(_availableResources->at(2)) + " " +
-    std::to_string(_availableResources->at(3)));
+    "Vetor de recursos disponíveis é: " +
+    std::to_string(this->_availableResources->at(0)) + " " +
+    std::to_string(this->_availableResources->at(1)) + " " +
+    std::to_string(this->_availableResources->at(2)) + " " +
+    std::to_string(this->_availableResources->at(3)));
 
-  Debug::cout(Debug::Level::info,
-    "currentAllocation do processo " + std::to_string(process) + " é: " +
-    std::to_string(_currentAllocation->at(processID).at(0)) + " " +
-    std::to_string(_currentAllocation->at(processID).at(1)) + " " +
-    std::to_string(_currentAllocation->at(processID).at(2)) + " " +
-    std::to_string(_currentAllocation->at(processID).at(3)));
+  for (auto i = 0; i < this->_numberOfProcesses; i++) {
+    Debug::cout(Debug::Level::info,
+      "Processo " + std::to_string(i+1) + " tem esse vetor de recurso: " +
+      std::to_string(this->_currentAllocation->at(i).at(0)) + " " +
+      std::to_string(this->_currentAllocation->at(i).at(1)) + " " +
+      std::to_string(this->_currentAllocation->at(i).at(2)) + " " +
+      std::to_string(this->_currentAllocation->at(i).at(3)));
+  }
 
-  Debug::cout(Debug::Level::info,
-    "processNeeds  do processo " + std::to_string(process) + " é: " +
-    std::to_string(_processNeeds->at(processID).at(0)) + " " +
-    std::to_string(_processNeeds->at(processID).at(1)) + " " +
-    std::to_string(_processNeeds->at(processID).at(2)) + " " +
-    std::to_string(_processNeeds->at(processID).at(3)));
+  for (auto j = 0; j < this->_numberOfProcesses; j++) {
+    Debug::cout(Debug::Level::info,
+      "Processo " + std::to_string(j+1) + " tem esse vetor de necessidade: " +
+      std::to_string(this->_processNeeds->at(j).at(0)) + " " +
+      std::to_string(this->_processNeeds->at(j).at(1)) + " " +
+      std::to_string(this->_processNeeds->at(j).at(2)) + " " +
+      std::to_string(this->_processNeeds->at(j).at(3)));
+  }
 }
