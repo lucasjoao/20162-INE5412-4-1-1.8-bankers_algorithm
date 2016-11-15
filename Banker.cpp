@@ -2,6 +2,14 @@
 #include "Banker.h"
 #include "OperatingSystem.h"
 
+/*!
+ *  \brief Banker.cpp
+ *  \copyright Copyright [2016] <Lucas Joao Martins>
+ *  \author Lucas Joao Martins
+ *
+ *  class responsible to do the banker's algorithm
+ */
+
 Banker::Banker() {
 }
 
@@ -74,6 +82,7 @@ bool Banker::request(int process, int resource, int amount) {
   // if run the next line in test mode, the program will crash
   // this->printHelperDebug();
 
+  // process wants more than he need, this isnt a good idea
   if (amount > this->_processNeeds->at(processID).at(resourceID)) {
     Debug::cout(Debug::Level::info, "Ele só precisa de " +
       std::to_string(this->_processNeeds->at(processID).at(resourceID)) +
@@ -82,6 +91,7 @@ bool Banker::request(int process, int resource, int amount) {
     return false;
   }
 
+  // only grant the request if the resulting state be safe
   if (this->algorithm(process, resource, amount)) {
     Debug::cout(Debug::Level::info,
       "A solicitação gera um estado seguro, então é possível atendê-la");
@@ -112,14 +122,16 @@ bool Banker::algorithm(int process, int resource, int amount) {
     std::to_string(resource) + " gera um estado inseguro ou não...");
 
   std::vector<bool>* finishedJob = new std::vector<bool>(
-    this->_numberOfProcesses, false);
+    this->_numberOfProcesses, false); //!< to simulate that process finish job
   int resourceID = resource - 1;
   int processID = process - 1;
 
+  // necessary to dont lose the current state of system
   std::vector<int> aRfixBug = *this->_availableResources;
   std::vector<std::vector<int>> cAfixBug = *this->_currentAllocation;
   std::vector<std::vector<int>> pNfixBug = *this->_processNeeds;
 
+  // process wants more resource that is available, so is a unsafe state
   if (amount > this->_availableResources->at(resourceID)) {
     Debug::cout(Debug::Level::info,
       "Foi solicitado mais recursos do que há disponível. Não pode!");
@@ -127,7 +139,9 @@ bool Banker::algorithm(int process, int resource, int amount) {
     return false;
   }
 
+  // process ask the same amount of the resource that he need to finish the job
   if (amount == this->_processNeeds->at(processID).at(resourceID)) {
+    // lets check if he still need other resource to finish your job
     bool dontNeedMore = true;
     for (int i = 0; i < this->_numberOfResources; i++) {
       if (i != resourceID &&
@@ -202,9 +216,11 @@ bool Banker::algorithm(int process, int resource, int amount) {
     }
   }
 
+  // necessary to dont lose the current state of system
   *this->_availableResources = aRfixBug;
   *this->_currentAllocation = cAfixBug;
   *this->_processNeeds = pNfixBug;
+
   return haveWorkToDo ? false : true;
 }
 
@@ -230,8 +246,7 @@ void Banker::free(int process, int resource) {
 }
 
 void Banker::printHelperDebug() {
-  Debug::cout(Debug::Level::trace,
-    "Banker::printHelperDebug()");
+  Debug::cout(Debug::Level::trace, "Banker::printHelperDebug()");
 
   Debug::cout(Debug::Level::info,
     "Vetor de recursos disponíveis é: " +

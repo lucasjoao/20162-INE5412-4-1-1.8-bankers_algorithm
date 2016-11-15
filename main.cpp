@@ -61,6 +61,7 @@ int main(int argc, char** argv) {
 
     simulator->run();
   } else {
+    // 12 because we have 11 unitary tests
     while (test != 12) {
       std::cout << "Test " << test << " selected\n";
       ProblemTester* tester = new ProblemTester(); //ProblemSolving20162Tester(); //ProblemSolving5Tester();
