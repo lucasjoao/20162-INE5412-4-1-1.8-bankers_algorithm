@@ -23,6 +23,10 @@ Banker::Banker(int numberOfResources, int numberOfProcesses) {
 Banker::~Banker() {
 }
 
+std::vector<int>* Banker::getExistenceResources() {
+  return this->_existenceResources;
+}
+
 void Banker::addExistenceResources(int resource, int amount) {
   Debug::cout(Debug::Level::trace, "Banker::addExistenceResources(" +
     std::to_string(resource) + ", " + std::to_string(amount) + ")");
