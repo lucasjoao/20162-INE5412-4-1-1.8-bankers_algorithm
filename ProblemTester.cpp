@@ -48,36 +48,47 @@ void ProblemTester::_clearSystem() {
 
 // VIRTUAL!!
 TestInfo ProblemTester::do_real_test(int numTest){
-    TestInfo testInfo = TestInfo();
-    Traits<Model>::ProblemSolving problem = Traits<Model>::problemChoosen;
-    return testInfo;
+  TestInfo testInfo = TestInfo();
+  // Traits<Model>::ProblemSolving problem = Traits<Model>::problemChoosen;
+  switch (numTest) {
+    case 1:
+      testInfo.SetTestName("teste do lucas");
+      testInfo.SetMessage("mensagem do lucas");
+      break;
+    case 2:
+      testInfo.SetTestName("teste da dai");
+      testInfo.SetMessage("mensagem da dai");
+      break;
+    default:
+      break;
+  }
+  return testInfo;
 }
 
 
 void ProblemTester::test(int numTest) {
-    Model* model = _modelBuilder->buildModel();
-            
-    Simulator* simulator = Simulator::getInstance();
-    simulator->setModel(model);
-    //simulator->step();
+  Model* model = _modelBuilder->buildModel();
 
-    TestInfo testInfo = TestInfo();
-    try {
-        testInfo = do_real_test(numTest);
-    } catch (int ex) {
-        testInfo.SetFailed(true);
-        testInfo.SetMessage("Exception raised when executing the test. Tester has failed.");
-    }
-    
-    std::string message = testInfo.GetMessage();
-    if (testInfo.IsFailed()) {
-        std::cout << "[[TEST_FAILED]]";
-        message = "ERROR: " + message;
-    } else {
-        std::cout << "[[TEST_SUCCESS]]";
-        message = "Woohoo.";
-    }
-    std::cout << " (" << numTest << ") testName='" << testInfo.GetTestName() << "' message='" << message << "'" << std::endl;
+  Simulator* simulator = Simulator::getInstance();
+  simulator->setModel(model);
+  //simulator->step();
 
+  TestInfo testInfo = TestInfo();
+  try {
+    testInfo = do_real_test(numTest);
+  } catch (int ex) {
+    testInfo.SetFailed(true);
+    testInfo.SetMessage("Exception raised when executing the test. Tester has failed.");
+  }
+
+  std::string message = testInfo.GetMessage();
+  if (testInfo.IsFailed()) {
+    std::cout << "[[TEST_FAILED]]";
+    message = "ERROR: " + message;
+  } else {
+    std::cout << "[[TEST_SUCCESS]]";
+    message = "Woohoo.";
+  }
+  std::cout << " (" << numTest << ") testName='" << testInfo.GetTestName() << "' message='" << message << "'" << std::endl;
 }
 

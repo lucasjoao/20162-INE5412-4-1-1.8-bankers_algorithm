@@ -29,40 +29,43 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    int test = -1;
+  int test = -1;
 
-    struct pollfd fds;
-    int ret;
-    fds.fd = 0; /* this is STDIN */
-    fds.events = POLLIN;
-    ret = poll(&fds, 1, 0);
-    if (ret == 1) {
-        std::cin >> test;
-        //    std::cout << "Test " << test << " selected\n";
-        //} else {
-        //    std::cout << "Normal execution selected\n";
+  struct pollfd fds;
+  int ret;
+  fds.fd = 0; /* this is STDIN */
+  fds.events = POLLIN;
+  ret = poll(&fds, 1, 0);
+  if (ret == 1) {
+    std::cin >> test;
+    //    std::cout << "Test " << test << " selected\n";
+    //} else {
+    //    std::cout << "Normal execution selected\n";
+  }
+
+  ModelBuilder* builder = new ProblemSolving20162ModelBuilder(); //ProblemSolving5ModelBuilder();
+
+  test = 1;
+  if (test == -1) {
+    std::cout << "Normal execution selected\n";
+    Simulator* simulator = Simulator::getInstance();
+    Model* model = builder->buildModel();
+    simulator->setModel(model);
+
+    // not the best place to be, but for short...
+    OperatingSystem::Init();
+
+    simulator->run();
+  } else {
+    while (test != 3) {
+      std::cout << "Test " << test << " selected\n";
+      ProblemTester* tester = new ProblemTester(); //ProblemSolving20162Tester(); //ProblemSolving5Tester();
+      tester->setBuilder(builder);
+      tester->test(test);
+      test++;
     }
-
-    ModelBuilder* builder = new ProblemSolving20162ModelBuilder(); //ProblemSolving5ModelBuilder(); 
-
-    //test = 1;
-    if (test == -1) {
-        std::cout << "Normal execution selected\n";
-        Simulator* simulator = Simulator::getInstance();
-        Model* model = builder->buildModel();
-        simulator->setModel(model);
-
-        // not the best place to be, but for short...
-        OperatingSystem::Init();
-
-        simulator->run();
-    } else {
-        std::cout << "Test " << test << " selected\n";
-        ProblemTester* tester = new ProblemTester(); //ProblemSolving20162Tester(); //ProblemSolving5Tester();
-        tester->setBuilder(builder);
-        tester->test(test);
-    }
-    return 0;
+  }
+  return 0;
 }
 
 
