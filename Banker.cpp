@@ -27,6 +27,10 @@ std::vector<int>* Banker::getExistenceResources() {
   return this->_existenceResources;
 }
 
+std::vector<int>* Banker::getAvailableResources() {
+  return this->_availableResources;
+}
+
 void Banker::addExistenceResources(int resource, int amount) {
   Debug::cout(Debug::Level::trace, "Banker::addExistenceResources(" +
     std::to_string(resource) + ", " + std::to_string(amount) + ")");

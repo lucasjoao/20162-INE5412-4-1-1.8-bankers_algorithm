@@ -56,6 +56,7 @@ TestInfo ProblemTester::do_real_test(int numTest){
   int numberOfProcesses = 3;
   int resource, resourceID, amount;
   Banker* banker = new Banker(numberOfResources, numberOfProcesses);
+
   switch (numTest) {
     case 1:
       resource = 2;
@@ -70,17 +71,48 @@ TestInfo ProblemTester::do_real_test(int numTest){
 
       if (banker->getExistenceResources()->at(resourceID) == amount) {
         testInfo.SetFailed(false);
-        testInfo.SetMessage(
-          "Comportamento esperado. 'banker->getExistenceResources->at(" +
-          std::to_string(resourceID) + ") == " + std::to_string(amount) +
-          "' retorna TRUE");
       } else {
         testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
       }
       break;
     case 2:
-      testInfo.SetTestName("teste da dai");
-      testInfo.SetMessage("mensagem da dai");
+      resource = 3;
+      amount = 1;
+      resourceID = resource - 1;
+
+      testInfo.SetTestName(
+        "Verificar Banker::addExistenceResources(" + std::to_string(resource) +
+        ", " + std::to_string(amount) + ") no vetor _availableResources");
+
+      banker->addExistenceResources(resource, amount);
+
+      if (banker->getAvailableResources()->at(resourceID) == 0) {
+        testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
+      } else {
+        testInfo.SetFailed(false);
+      }
+      break;
+    case 3:
+      break;
+    case 4:
+      break;
+    case 5:
+      break;
+    case 6:
+      break;
+    case 7:
+      break;
+    case 8:
+      break;
+    case 9:
+      break;
+    case 10:
+      break;
+    case 11:
+      break;
+    case 12:
+      break;
+    case 13:
       break;
     default:
       break;

@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
 
     simulator->run();
   } else {
-    while (test != 3) {
+    while (test != 14) {
       std::cout << "Test " << test << " selected\n";
       ProblemTester* tester = new ProblemTester(); //ProblemSolving20162Tester(); //ProblemSolving5Tester();
       tester->setBuilder(builder);

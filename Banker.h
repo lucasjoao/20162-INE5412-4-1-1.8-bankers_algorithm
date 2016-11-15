@@ -18,6 +18,7 @@ public:
   Banker(int numberOfResources, int numberOfProcesses);
   virtual ~Banker();
   std::vector<int>* getExistenceResources();
+  std::vector<int>* getAvailableResources();
   void addExistenceResources(int resource, int amount);
   void addProcessNeeds(int process, int resource, int amount);
   bool request(int process, int resource, int amount);
