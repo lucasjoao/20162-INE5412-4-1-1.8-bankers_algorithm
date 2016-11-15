@@ -152,6 +152,7 @@ bool Banker::algorithm(int process, int resource, int amount) {
       }
     }
 
+    // if dont need more other resource, then lets finish this process
     if (dontNeedMore) {
       Debug::cout(Debug::Level::info,
         "A solicitação irá fazer com que o processo termine o seu trabalho");
@@ -164,6 +165,7 @@ bool Banker::algorithm(int process, int resource, int amount) {
     }
   }
 
+  // lets do the request if the process was not finished previously
   if (!finishedJob->at(processID)) {
     Debug::cout(Debug::Level::info,
       "A solicitação não será suficiente para que o processo termine");
@@ -178,14 +180,16 @@ bool Banker::algorithm(int process, int resource, int amount) {
   while (haveWorkToDo) {
     infiniteLoop = true;
     for (int j = 0; j < this->_numberOfProcesses; j++) {
-      if (finishedJob->at(j)) continue;
+      if (finishedJob->at(j)) continue; // dont iterate if process has finished
 
+      // part of step 1 of algorithm in Tanenbaum book, look for a row
       bool lessThan = true;
       for (int k = 0; k < this->_numberOfResources; k++) {
         if (this->_processNeeds->at(j).at(k) > this->_availableResources->at(k))
           lessThan = false;
       }
 
+      // part of step 2 of algorithm in Tanenbaum book, the row was found
       if (lessThan) {
         Debug::cout(Debug::Level::info,
           "Processo " + std::to_string(j) + " pode pegar todos os recursos " +
@@ -202,6 +206,7 @@ bool Banker::algorithm(int process, int resource, int amount) {
       }
     }
 
+    // lets check if all process are marked finished
     haveWorkToDo = false;
     for (unsigned int m = 0; m < finishedJob->size(); m++) {
       if (!finishedJob->at(m)) {
@@ -210,6 +215,7 @@ bool Banker::algorithm(int process, int resource, int amount) {
       }
     }
 
+    // avoid a infinite loop
     if (infiniteLoop) {
       Debug::cout(Debug::Level::info,
         "Na situação atual, não tem como garantir que todos os processos terminarão");
@@ -232,6 +238,7 @@ void Banker::free(int process, int resource) {
   int processID = process - 1;
   int resourceID = resource - 1;
 
+  // only free 1 unit if the process has at the least 1 unit of the resource
   if (this->_currentAllocation->at(processID).at(resourceID) != 0) {
     Debug::cout(Debug::Level::info, "O processo " + std::to_string(process) +
       " liberou 1 unidade do recurso " + std::to_string(resource));
