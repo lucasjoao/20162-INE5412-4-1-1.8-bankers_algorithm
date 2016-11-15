@@ -54,41 +54,10 @@ void OperatingSystem::ExecuteTestCode() {
   int executionStep = std::stoi(entity->getAttribute("ExecutionStep")->getValue());
   double timeNow = simulator->getTnow();
 
-  /* maybe i can use this later...
-  ****************************************************************************** STATICS OF SAFE
-  auto areSafe = 0;
-  bool safe;
-
-  safe = memoryManager->banker(ids, hasMems, needMems, j, ask);
-
-  if (safe)
-    areSafe += 1;
-
-  auto areSafePercent = (double(areSafe)/double(nro_process)) * 100;
-  auto notSafePercent = 100 - areSafePercent;
-
-  Debug::cout(Debug::Level::info, "De todos os pedidos de alocação "
-    + std::to_string(areSafePercent) + "\045 serão aprovados e "
-    + std::to_string(notSafePercent) + "\045 serão reprovados.");
-
-  Debug::cout(Debug::Level::info, "De todas os pedidos de alocação "
-    + std::to_string(areSafePercent) + "\045 serão estados seguros e "
-    + std::to_string(notSafePercent) + "\045 serão estados inseguros.");
-  */
-
-  /* maybe i can use this later...
-  ****************************************************************************** COUT OF TIME
-  Debug::cout(Debug::Level::info,
-    "Foi gasto " + std::to_string(time) + " segundos no algoritmo.");
-
-  Debug::cout(Debug::Level::info,
-    "O tempo médio de execução do algoritmo foi de " +
-    std::to_string(averageTime) + " segundos.");
-  */
-
   int numberOfResources = 4;
   int numberOfProcesses = 5;
   Banker* banker = new Banker(numberOfResources, numberOfProcesses);
+  auto areSafe = 0;
 
   switch (executionStep) {
     case 0:  // executionStep is initialized with 0
@@ -98,6 +67,7 @@ void OperatingSystem::ExecuteTestCode() {
       Debug::cout(Debug::Level::info,
         "Haverá " + std::to_string(numberOfProcesses) +
         " processo(s) na simulação");
+
       banker->addExistenceResources(1, 6);
       banker->addExistenceResources(2, 3);
       banker->addExistenceResources(3, 4);
@@ -123,43 +93,55 @@ void OperatingSystem::ExecuteTestCode() {
       banker->addProcessNeeds(5, 3, 1);
       banker->addProcessNeeds(5, 4, 0);
       // gerar estado do livro ***TMP***
-      banker->request(1, 1, 3);
-      banker->request(1, 3, 1);
-      banker->request(1, 4, 1);
-      banker->request(2, 2, 1);
-      banker->request(3, 1, 1);
-      banker->request(3, 2, 1);
-      banker->request(3, 3, 1);
-      banker->request(4, 1, 1);
-      banker->request(4, 2, 1);
-      banker->request(4, 4, 1);
+      areSafe += banker->request(1, 1, 3) ? 1 : 0;
+      areSafe += banker->request(1, 3, 1) ? 1 : 0;
+      areSafe += banker->request(1, 4, 1) ? 1 : 0;
+      areSafe += banker->request(2, 2, 1) ? 1 : 0;
+      areSafe += banker->request(3, 1, 1) ? 1 : 0;
+      areSafe += banker->request(3, 2, 1) ? 1 : 0;
+      areSafe += banker->request(3, 3, 1) ? 1 : 0;
+      areSafe += banker->request(4, 1, 1) ? 1 : 0;
+      areSafe += banker->request(4, 2, 1) ? 1 : 0;
+      areSafe += banker->request(4, 4, 1) ? 1 : 0;
       // primeira solicitação do livro ***TMP***
-      banker->request(2, 3, 1);
+      areSafe += banker->request(2, 3, 1) ? 1 : 0;
       // segunda solicitação do livro, inseguro ***TMP***
-      banker->request(5, 3, 1);
+      areSafe += banker->request(5, 3, 1) ? 1 : 0;
       // terceira solicitação pessoal ***TMP***
-      banker->request(2, 4, 2);
+      areSafe += banker->request(2, 4, 2) ? 1 : 0;
       // quarta solicitação pessoal ***TMP***
       banker->free(1, 4);
-      banker->request(5, 1, 1);
+      areSafe += banker->request(5, 1, 1) ? 1 : 0;
       // quinta solicitação pessoal ***TMP***
-      banker->request(5, 3, 1);
-      break;
-    case 1:
-
-      break;
-    case 2:
+      areSafe += banker->request(5, 3, 1) ? 1 : 0;
       break;
     default:
       break;
   }
+
+  double averageTime = simulator->getTnow() / 15;
+
+  Debug::cout(Debug::Level::info,
+    "O tempo médio de execução após 15 solicitações foi de " +
+    std::to_string(averageTime));
+
+  auto areSafePercent = (double(areSafe)/15.0) * 100;
+  auto notSafePercent = 100 - areSafePercent;
+
+  Debug::cout(Debug::Level::info, "De todos os pedidos de alocação "
+    + std::to_string(areSafePercent) + "\045 serão aprovados e "
+    + std::to_string(notSafePercent) + "\045 serão reprovados");
+
+  Debug::cout(Debug::Level::info, "De todos os pedidos de alocação "
+    + std::to_string(areSafePercent) + "\045 serão estados seguros e "
+    + std::to_string(notSafePercent) + "\045 serão estados inseguros");
 
   // advance execution step
   entity->getAttribute("ExecutionStep")->setValue(std::to_string(++executionStep));
   // future event when execution will advance
   simulator->insertEvent(timeNow + 10.0, module, entity);
 
-  if (executionStep == 2) simulator->stop();
+  if (executionStep == 1) simulator->stop();
 }
 
  /*
