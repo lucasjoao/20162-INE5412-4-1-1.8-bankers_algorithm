@@ -161,14 +161,16 @@ bool Banker::algorithm(int process, int resource, int amount) {
       this->_currentAllocation->at(processID).at(resourceID) = 0;
       this->_processNeeds->at(processID).at(resourceID) = 0;
       finishedJob->at(processID) = true;
-    } else {
-      Debug::cout(Debug::Level::info,
-        "A solicitação não será suficiente para que o processo termine");
-
-      this->_availableResources->at(resourceID) -= amount;
-      this->_currentAllocation->at(processID).at(resourceID) += amount;
-      this->_processNeeds->at(processID).at(resourceID) -= amount;
     }
+  }
+
+  if (!finishedJob->at(processID)) {
+    Debug::cout(Debug::Level::info,
+      "A solicitação não será suficiente para que o processo termine");
+
+    this->_availableResources->at(resourceID) -= amount;
+    this->_currentAllocation->at(processID).at(resourceID) += amount;
+    this->_processNeeds->at(processID).at(resourceID) -= amount;
   }
 
   bool infiniteLoop;
