@@ -70,11 +70,10 @@ TestInfo ProblemTester::do_real_test(int numTest){
 
       banker->addExistenceResources(resource, amount);
 
-      if (banker->getExistenceResources()->at(resourceID) == amount) {
+      if (banker->getExistenceResources()->at(resourceID) == amount)
         testInfo.SetFailed(false);
-      } else {
+      else
         testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
-      }
       break;
     case 2:
       banker = new Banker(numberOfResources, numberOfProcesses);
@@ -88,11 +87,10 @@ TestInfo ProblemTester::do_real_test(int numTest){
 
       banker->addExistenceResources(resource, amount);
 
-      if (banker->getAvailableResources()->at(resourceID) == 0) {
+      if (banker->getAvailableResources()->at(resourceID) == 0)
         testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
-      } else {
+      else
         testInfo.SetFailed(false);
-      }
       break;
     case 3:
       banker = new Banker(numberOfResources, numberOfProcesses);
@@ -109,11 +107,10 @@ TestInfo ProblemTester::do_real_test(int numTest){
 
       banker->addProcessNeeds(process, resource, amount);
 
-      if (banker->getProcessNeeds()->at(processID).at(resourceID) == amount) {
+      if (banker->getProcessNeeds()->at(processID).at(resourceID) == amount)
         testInfo.SetFailed(false);
-      } else {
+      else
         testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
-      }
       break;
     case 4:
       banker = new Banker(numberOfResources, numberOfProcesses);
@@ -130,17 +127,69 @@ TestInfo ProblemTester::do_real_test(int numTest){
 
       banker->addProcessNeeds(process, resource, amount);
 
-      if (banker->getProcessNeeds()->at(processID).at(resourceID) == 0) {
+      if (banker->getProcessNeeds()->at(processID).at(resourceID) == 0)
         testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
-      } else {
+      else
         testInfo.SetFailed(false);
-      }
       break;
     case 5:
+      banker = new Banker(numberOfResources, numberOfProcesses);
+      resource = 1;
+      process = 1;
+      amount = 1;
+
+      testInfo.SetTestName(
+        "Verificar que Banker::request(" + std::to_string(process) + ", " +
+         std::to_string(resource) + ", " + std::to_string(amount) + ") " +
+         " retorna FALSE se o processo pede mais do que precisa");
+
+      if (!banker->request(process, resource, amount))
+        testInfo.SetFailed(false);
+      else
+        testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
       break;
     case 6:
+      banker = new Banker(numberOfResources, numberOfProcesses);
+      amount = 1;
+
+      testInfo.SetTestName(
+        "Verificar que Banker::request(" + std::to_string(process) + ", " +
+         std::to_string(resource) + ", " + std::to_string(amount) + ") " +
+         " retorna TRUE se um estado seguro for gerado");
+
+      for (auto i = 1; i < 3; i++) {
+        banker->addExistenceResources(i, amount);
+        for (auto j = 1; j < 3; j++)
+          banker->addProcessNeeds(i, j, amount);
+      }
+
+      if (banker->request(1, 1, amount))
+        testInfo.SetFailed(false);
+      else
+        testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
+      break;
       break;
     case 7:
+      banker = new Banker(numberOfResources, numberOfProcesses);
+      amount = 1;
+
+      testInfo.SetTestName(
+        "Verificar que Banker::request(" + std::to_string(process) + ", " +
+         std::to_string(resource) + ", " + std::to_string(amount) + ") " +
+         " retorna FALSE se um estado inseguro for gerado");
+
+      for (auto i = 1; i < 3; i++) {
+        banker->addExistenceResources(i, amount);
+        for (auto j = 1; j < 3; j++)
+          banker->addProcessNeeds(i, j, amount);
+      }
+
+      banker->request(1, 1, amount);
+
+      if (!banker->request(2, 2, amount))
+        testInfo.SetFailed(false);
+      else
+        testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
       break;
     case 8:
       break;
@@ -165,11 +214,10 @@ TestInfo ProblemTester::do_real_test(int numTest){
 
       if (banker->getProcessNeeds()->at(processID).at(resourceID) == 0 &&
           banker->getAvailableResources()->at(resourceID) == 0 &&
-          banker->getCurrentAllocation()->at(processID).at(resourceID) == 0) {
+          banker->getCurrentAllocation()->at(processID).at(resourceID) == 0)
         testInfo.SetFailed(false);
-      } else {
+      else
         testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
-      }
       break;
     case 13:
       banker = new Banker(numberOfResources, numberOfProcesses);
@@ -190,11 +238,10 @@ TestInfo ProblemTester::do_real_test(int numTest){
 
       if (banker->getProcessNeeds()->at(processID).at(resourceID) == 1 &&
           banker->getAvailableResources()->at(resourceID) == 1 &&
-          banker->getCurrentAllocation()->at(processID).at(resourceID) == 0) {
+          banker->getCurrentAllocation()->at(processID).at(resourceID) == 0)
         testInfo.SetFailed(false);
-      } else {
+      else
         testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
-      }
       break;
     default:
       break;

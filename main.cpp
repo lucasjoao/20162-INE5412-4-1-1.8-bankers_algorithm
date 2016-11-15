@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
 
   ModelBuilder* builder = new ProblemSolving20162ModelBuilder(); //ProblemSolving5ModelBuilder();
 
-  // uncomment next line and comment any call to printHelperDebug() in
+  // uncomment line 52 and comment any call to printHelperDebug() in
   // Banker.cpp to run unitary tests
   // please, change 'trace' and 'info' in Traits.h to false for a better
   // return in terminal while testing
