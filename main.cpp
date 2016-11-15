@@ -45,6 +45,10 @@ int main(int argc, char** argv) {
 
   ModelBuilder* builder = new ProblemSolving20162ModelBuilder(); //ProblemSolving5ModelBuilder();
 
+  // uncomment next line and comment any call to printHelperDebug() in
+  // Banker.cpp to run unitary tests
+  // please, change 'trace' and 'info' in Traits.h to false for a better
+  // return in terminal while testing
   test = 1;
   if (test == -1) {
     std::cout << "Normal execution selected\n";

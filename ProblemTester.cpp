@@ -54,11 +54,12 @@ TestInfo ProblemTester::do_real_test(int numTest){
   // Traits<Model>::ProblemSolving problem = Traits<Model>::problemChoosen;
   int numberOfResources = 3;
   int numberOfProcesses = 3;
-  int resource, resourceID, amount;
-  Banker* banker = new Banker(numberOfResources, numberOfProcesses);
+  int resource, resourceID, process, processID, amount;
+  Banker* banker;
 
   switch (numTest) {
     case 1:
+      banker = new Banker(numberOfResources, numberOfProcesses);
       resource = 2;
       amount = 4;
       resourceID = resource - 1;
@@ -76,6 +77,7 @@ TestInfo ProblemTester::do_real_test(int numTest){
       }
       break;
     case 2:
+      banker = new Banker(numberOfResources, numberOfProcesses);
       resource = 3;
       amount = 1;
       resourceID = resource - 1;
@@ -93,8 +95,46 @@ TestInfo ProblemTester::do_real_test(int numTest){
       }
       break;
     case 3:
+      banker = new Banker(numberOfResources, numberOfProcesses);
+      resource = 1;
+      process = 2;
+      amount = 3;
+      resourceID = resource - 1;
+      processID = process - 1;
+
+      testInfo.SetTestName(
+        "Verificar Banker::addProcessNeeds(" + std::to_string(process) + ", " +
+         std::to_string(resource) + ", " + std::to_string(amount) + ") na" +
+         " matriz _processNeeds");
+
+      banker->addProcessNeeds(process, resource, amount);
+
+      if (banker->getProcessNeeds()->at(processID).at(resourceID) == amount) {
+        testInfo.SetFailed(false);
+      } else {
+        testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
+      }
       break;
     case 4:
+      banker = new Banker(numberOfResources, numberOfProcesses);
+      resource = 3;
+      process = 3;
+      amount = 1;
+      resourceID = resource - 1;
+      processID = process - 1;
+
+      testInfo.SetTestName(
+        "Verificar Banker::addProcessNeeds(" + std::to_string(process) + ", " +
+         std::to_string(resource) + ", " + std::to_string(amount) + ") na" +
+         " matriz _processNeeds");
+
+      banker->addProcessNeeds(process, resource, amount);
+
+      if (banker->getProcessNeeds()->at(processID).at(resourceID) == 0) {
+        testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
+      } else {
+        testInfo.SetFailed(false);
+      }
       break;
     case 5:
       break;
@@ -111,8 +151,50 @@ TestInfo ProblemTester::do_real_test(int numTest){
     case 11:
       break;
     case 12:
+      banker = new Banker(numberOfResources, numberOfProcesses);
+      resource = 1;
+      process = 2;
+      resourceID = resource - 1;
+      processID = process - 1;
+
+      testInfo.SetTestName(
+        "Verificar que Banker::free(" + std::to_string(process) + ", " +
+         std::to_string(resource) + ") não trabalha se não houver recurso");
+
+      banker->free(process, resource);
+
+      if (banker->getProcessNeeds()->at(processID).at(resourceID) == 0 &&
+          banker->getAvailableResources()->at(resourceID) == 0 &&
+          banker->getCurrentAllocation()->at(processID).at(resourceID) == 0) {
+        testInfo.SetFailed(false);
+      } else {
+        testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
+      }
       break;
     case 13:
+      banker = new Banker(numberOfResources, numberOfProcesses);
+      resource = 2;
+      process = 2;
+      amount = 1;
+      resourceID = resource - 1;
+      processID = process - 1;
+
+      testInfo.SetTestName(
+        "Verificar que Banker::free(" + std::to_string(process) + ", " +
+         std::to_string(resource) + ") atualiza três atributos do Banker");
+
+      banker->addExistenceResources(resource, amount);
+      banker->addProcessNeeds(process, resource, amount);
+      banker->request(process, resource, amount);
+      banker->free(process, resource);
+
+      if (banker->getProcessNeeds()->at(processID).at(resourceID) == 1 &&
+          banker->getAvailableResources()->at(resourceID) == 1 &&
+          banker->getCurrentAllocation()->at(processID).at(resourceID) == 0) {
+        testInfo.SetFailed(false);
+      } else {
+        testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
+      }
       break;
     default:
       break;

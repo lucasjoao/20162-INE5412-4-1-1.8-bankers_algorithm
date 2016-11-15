@@ -19,6 +19,8 @@ public:
   virtual ~Banker();
   std::vector<int>* getExistenceResources();
   std::vector<int>* getAvailableResources();
+  std::vector<std::vector<int>>* getProcessNeeds();
+  std::vector<std::vector<int>>* getCurrentAllocation();
   void addExistenceResources(int resource, int amount);
   void addProcessNeeds(int process, int resource, int amount);
   bool request(int process, int resource, int amount);

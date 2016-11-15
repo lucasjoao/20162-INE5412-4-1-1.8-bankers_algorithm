@@ -31,6 +31,14 @@ std::vector<int>* Banker::getAvailableResources() {
   return this->_availableResources;
 }
 
+std::vector<std::vector<int>>* Banker::getProcessNeeds() {
+  return this->_processNeeds;
+}
+
+std::vector<std::vector<int>>* Banker::getCurrentAllocation() {
+  return this->_currentAllocation;
+}
+
 void Banker::addExistenceResources(int resource, int amount) {
   Debug::cout(Debug::Level::trace, "Banker::addExistenceResources(" +
     std::to_string(resource) + ", " + std::to_string(amount) + ")");
@@ -63,7 +71,8 @@ bool Banker::request(int process, int resource, int amount) {
   int resourceID = resource - 1;
   int processID = process - 1;
 
-  this->printHelperDebug();
+  // if run the next line in test mode, the program will crash
+  // this->printHelperDebug();
 
   if (amount > this->_processNeeds->at(processID).at(resourceID)) {
     Debug::cout(Debug::Level::info, "Ele só precisa de " +
@@ -80,14 +89,16 @@ bool Banker::request(int process, int resource, int amount) {
     this->_availableResources->at(resourceID) -= amount;
     this->_currentAllocation->at(processID).at(resourceID) += amount;
     this->_processNeeds->at(processID).at(resourceID) -= amount;
-    this->printHelperDebug();
+    // if run the next line in test mode, the program will crash
+    // this->printHelperDebug();
     return true;
   }
 
   Debug::cout(Debug::Level::info,
     "A solicitação gera um estado inseguro, então não é possível atendê-la");
 
-  this->printHelperDebug();
+  // if run the next line in test mode, the program will crash
+  // this->printHelperDebug();
   return false;
 }
 
