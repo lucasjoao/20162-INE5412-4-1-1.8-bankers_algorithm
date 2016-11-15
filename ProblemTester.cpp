@@ -140,7 +140,7 @@ TestInfo ProblemTester::do_real_test(int numTest){
 
       testInfo.SetTestName(
         "Verificar que Banker::request(" + std::to_string(process) + ", " +
-         std::to_string(resource) + ", " + std::to_string(amount) + ") " +
+         std::to_string(resource) + ", " + std::to_string(amount) + ")" +
          " retorna FALSE se o processo pede mais do que precisa");
 
       if (!banker->request(process, resource, amount))
@@ -154,7 +154,7 @@ TestInfo ProblemTester::do_real_test(int numTest){
 
       testInfo.SetTestName(
         "Verificar que Banker::request(" + std::to_string(process) + ", " +
-         std::to_string(resource) + ", " + std::to_string(amount) + ") " +
+         std::to_string(resource) + ", " + std::to_string(amount) + ")" +
          " retorna TRUE se um estado seguro for gerado");
 
       for (auto i = 1; i < 3; i++) {
@@ -175,7 +175,7 @@ TestInfo ProblemTester::do_real_test(int numTest){
 
       testInfo.SetTestName(
         "Verificar que Banker::request(" + std::to_string(process) + ", " +
-         std::to_string(resource) + ", " + std::to_string(amount) + ") " +
+         std::to_string(resource) + ", " + std::to_string(amount) + ")" +
          " retorna FALSE se um estado inseguro for gerado");
 
       for (auto i = 1; i < 3; i++) {
@@ -192,14 +192,45 @@ TestInfo ProblemTester::do_real_test(int numTest){
         testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
       break;
     case 8:
+      banker = new Banker(numberOfResources, numberOfProcesses);
+      resource = 2;
+      process = 1;
+      amount = 3;
+
+      testInfo.SetTestName(
+        "Verificar que Banker::algorithm(" + std::to_string(process) + ", " +
+         std::to_string(resource) + ", " + std::to_string(amount) + ")" +
+         " retorna TRUE se é solicitado uma quantidade que faz o processo " +
+         "terminar ao mesmo tempo que a solicitação gera um estado seguro");
+
+      banker->addExistenceResources(resource, amount);
+      banker->addProcessNeeds(process, resource, amount);
+
+      if (banker->algorithm(process, resource, amount))
+        testInfo.SetFailed(false);
+      else
+        testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
       break;
     case 9:
+      banker = new Banker(numberOfResources, numberOfProcesses);
+      resource = 3;
+      process = 3;
+      amount = 3;
+
+      testInfo.SetTestName(
+        "Verificar que Banker::algorithm(" + std::to_string(process) + ", " +
+         std::to_string(resource) + ", " + std::to_string(amount) + ")" +
+         " retorna TRUE se a solicitação gera um estado seguro");
+
+      banker->addExistenceResources(resource, amount*3);
+      banker->addProcessNeeds(process, resource, amount*2);
+
+      if (banker->algorithm(process, resource, amount))
+        testInfo.SetFailed(false);
+      else
+        testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
       break;
     case 10:
-      break;
-    case 11:
-      break;
-    case 12:
       banker = new Banker(numberOfResources, numberOfProcesses);
       resource = 1;
       process = 2;
@@ -219,7 +250,7 @@ TestInfo ProblemTester::do_real_test(int numTest){
       else
         testInfo.SetMessage("Aconteceu algum problema, verifique o código.");
       break;
-    case 13:
+    case 11:
       banker = new Banker(numberOfResources, numberOfProcesses);
       resource = 2;
       process = 2;
