@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
   // Banker.cpp to run unitary tests
   // please, change 'trace' and 'info' in Traits.h to false for a better
   // return in terminal while testing
-  test = 1;
+  // test = 1;
   if (test == -1) {
     std::cout << "Normal execution selected\n";
     Simulator* simulator = Simulator::getInstance();
